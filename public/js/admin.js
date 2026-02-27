@@ -260,11 +260,13 @@ function resetForm() {
 function showLogin() {
   loginSection.classList.remove("hidden");
   dashboard.classList.add("hidden");
+  logoutBtn.classList.add("hidden");
 }
 
 function showDashboard() {
   loginSection.classList.add("hidden");
   dashboard.classList.remove("hidden");
+  logoutBtn.classList.remove("hidden");
   if (!postForm.date.value) postForm.date.value = new Date().toISOString().slice(0, 10);
 }
 

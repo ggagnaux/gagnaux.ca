@@ -16,6 +16,7 @@ This project uses:
 - Draft support (`draft: true` hides post from public listing)
 - Image upload from admin and markdown insertion
 - Editable homepage config from the admin panel
+- Configurable navbar brand image via `brandImage` in site config
 
 ## Run locally
 

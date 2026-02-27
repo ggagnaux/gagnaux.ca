@@ -20,7 +20,9 @@ if (!existsSync(POSTS_DIR)) mkdirSync(POSTS_DIR, { recursive: true });
 if (!existsSync(UPLOADS_DIR)) mkdirSync(UPLOADS_DIR, { recursive: true });
 
 const DEFAULT_CONFIG = {
-  siteTitle: "gagnaux.ca",
+  siteTitle: "Greg Gagnaux",
+  brandImage: "/img/greg.jpg",
+  brandImageAlt: "Greg Gagnaux",
   tagline: "Work highlights, writing, and links.",
   about: "This is a minimal personal site for sharing projects, notes, and links.",
   highlights: [
@@ -105,6 +107,8 @@ function normalizeConfig(input) {
 
   return {
     siteTitle: String(cfg.siteTitle || DEFAULT_CONFIG.siteTitle).trim(),
+    brandImage: String(cfg.brandImage || DEFAULT_CONFIG.brandImage).trim(),
+    brandImageAlt: String(cfg.brandImageAlt || cfg.siteTitle || DEFAULT_CONFIG.brandImageAlt).trim(),
     tagline: String(cfg.tagline || DEFAULT_CONFIG.tagline).trim(),
     about: String(cfg.about || DEFAULT_CONFIG.about).trim(),
     highlights,

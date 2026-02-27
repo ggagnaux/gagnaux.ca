@@ -1,4 +1,5 @@
 :root {
+  color-scheme: light;
   --bg: #f6f6f1;
   --surface: #ffffff;
   --text: #1f1f1c;
@@ -6,15 +7,31 @@
   --border: #d7d7cd;
   --accent: #245f4a;
   --danger: #a53030;
+  --field-bg: #ffffff;
+  --bg-top: #ecefe5;
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: #151816;
+  --surface: #1d211f;
+  --text: #e7ece7;
+  --muted: #a8b2ab;
+  --border: #35413a;
+  --accent: #2494b3;
+  --danger: #ff8f8f;
+  --field-bg: #101311;
+  --bg-top: #1c241f;
 }
 
 * { box-sizing: border-box; }
 body {
   margin: 0;
   color: var(--text);
-  background: linear-gradient(180deg, #ecefe5 0%, var(--bg) 40%);
+  background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 40%);
   font-family: "Segoe UI", Tahoma, sans-serif;
   line-height: 1.6;
+  padding-bottom: 58px;
 }
 
 .container {
@@ -23,14 +40,120 @@ body {
   padding: 2rem 1rem 4rem;
 }
 
-.site-header {
-  margin-bottom: 1.5rem;
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   border-bottom: 1px solid var(--border);
-  padding-bottom: 0.8rem;
+  background: var(--surface);
+}
+
+.top-nav-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0.85rem 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.page-header {
+  margin-bottom: 1rem;
+}
+
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.brand {
+  color: var(--text);
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-image {
+  display: block;
+  height: 100px;
+  width: auto;
+  max-width: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 5px solid #d2d2d2;
+}
+
+.brand-title {
+  color: var(--text);
+  font-weight: 500;
+  font-size: 2.1rem;
+  line-height: 1.05;
+  white-space: pre-line;
 }
 
 nav { display: flex; gap: 1rem; flex-wrap: wrap; }
 a { color: var(--accent); }
+
+.top-menu {
+  display: flex;
+  gap: 0.6rem;
+  flex-wrap: wrap;
+}
+
+.top-menu button {
+  width: auto;
+  margin-top: 0;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+}
+
+.top-menu button[aria-current="page"] {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+.link-icon {
+  display: inline-block;
+  min-width: 1.2em;
+  margin-right: 0.25rem;
+}
+
+.theme-control {
+  width: 160px;
+}
+
+.theme-control label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.site-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 900;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+}
+
+.site-footer-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0.6rem 1rem;
+  text-align: left;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
 
 .card {
   background: var(--surface);
@@ -40,17 +163,30 @@ a { color: var(--accent); }
   margin-bottom: 1rem;
 }
 
+.admin-card-config {
+  background: color-mix(in srgb, var(--surface) 88%, #cdebdc 12%);
+}
+
+.admin-card-new-post {
+  background: color-mix(in srgb, var(--surface) 88%, #d7e8ff 12%);
+}
+
+.admin-card-all-posts {
+  background: color-mix(in srgb, var(--surface) 88%, #f7dfb3 12%);
+}
+
 .stack > * + * { margin-top: 0.75rem; }
 
 label { display: block; font-weight: 600; font-size: 0.95rem; }
-input, textarea, button {
+input, textarea, button, select {
   width: 100%;
   font: inherit;
   margin-top: 0.3rem;
   padding: 0.55rem 0.65rem;
   border-radius: 8px;
   border: 1px solid var(--border);
-  background: #fff;
+  background: var(--field-bg);
+  color: var(--text);
 }
 
 textarea { resize: vertical; }
@@ -63,7 +199,13 @@ button {
 button.ghost {
   background: transparent;
   color: var(--text);
-  border-color: var(--border);
+  border-color: var(--accent);
+}
+
+.inline-button {
+  width: auto;
+  margin-top: 0;
+  padding: 0.35rem 0.65rem;
 }
 
 .actions, .upload-row {
@@ -119,4 +261,6 @@ button.ghost {
 @media (max-width: 700px) {
   .actions, .upload-row { grid-template-columns: 1fr; }
   .list-item .row { flex-direction: column; align-items: flex-start; }
+  .top-nav-inner { align-items: stretch; }
+  .theme-control { width: 100%; }
 }

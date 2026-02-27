@@ -1,7 +1,9 @@
 {
-  "siteTitle": "gagnaux.ca",
+  "siteTitle": "Greg Gagnaux",
+  "brandImage": "/img/greg.jpg",
+  "brandImageAlt": "Greg Gagnaux",
   "tagline": "Work highlights, writing, and links.",
-  "about": "This is a minimal personal site for sharing projects, notes, and links.",
+  "about": "Thanks for stopping by!  This is my minimal personal site for sharing projects, notes, and links. I also have a site dedicated to my visual art at [www.toji.studio](http://www.toji.ca)",
   "highlights": [
     "Shipped practical web projects.",
     "Focused on clean UI and maintainable code.",
@@ -9,16 +11,24 @@
   ],
   "links": [
     {
+      "label": "Toji Studios - My visual art portfolio",
+      "url": "http://www.toji.ca"
+    },
+    {
+      "label": "Instagram - Toji Studios",
+      "url": "https://www.instagram.com/toji.studios/"
+    },
+    {
+      "label": "Instagram - My other account",
+      "url": "https://www.instagram.com/canadawry"
+    },
+    {
       "label": "GitHub",
       "url": "https://github.com/ggagnaux"
     },
     {
       "label": "LinkedIn",
       "url": "https://www.linkedin.com/in/ggagnaux"
-    },
-    {
-      "label": "Kohd & Art",
-      "url": "http://www.kohd.co"
     }
   ]
 }

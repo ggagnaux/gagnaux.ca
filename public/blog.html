@@ -5,20 +5,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Blog | gagnaux.ca</title>
   <link rel="stylesheet" href="/styles.css" />
+  <script src="/js/theme.js"></script>
+  <script src="/js/site-config.js"></script>
+  <script src="/js/nav.js"></script>
 </head>
 <body>
-  <main class="container">
-    <header class="site-header">
-      <h1>Blog</h1>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/blog.html" aria-current="page">Blog</a>
-        <a href="/admin.html">Admin</a>
+  <header class="top-nav">
+    <div class="top-nav-inner">
+      <a id="site-title" class="brand" href="/">
+        <img id="brand-image" class="brand-image" src="/img/greg.jpg" alt="Greg Gagnaux" />
+        <span id="brand-title" class="brand-title">Greg Gagnaux</span>
+      </a>
+      <nav class="top-menu">
+        <button type="button" data-href="/">Home</button>
+        <button type="button" data-href="/blog.html" aria-current="page">Blog</button>
+        <button type="button" data-href="/admin.html">Admin</button>
       </nav>
+      <div class="theme-control">
+        <label for="theme-select">Theme</label>
+        <select id="theme-select">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <header class="page-header">
+      <h1>Blog</h1>
     </header>
 
     <section id="posts" class="stack"></section>
   </main>
+  <footer class="site-footer">
+    <div class="site-footer-inner">Copyright © 2026 Greg Gagnaux. All rights reserved.</div>
+  </footer>
 
   <script type="module" src="/js/blog.js"></script>
 </body>

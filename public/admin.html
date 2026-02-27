@@ -5,16 +5,37 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin | gagnaux.ca</title>
   <link rel="stylesheet" href="/styles.css" />
+  <script src="/js/theme.js"></script>
+  <script src="/js/site-config.js"></script>
+  <script src="/js/nav.js"></script>
 </head>
 <body>
-  <main class="container admin-layout">
-    <header class="site-header">
-      <h1>Admin</h1>
-      <nav>
-        <a href="/">Home</a>
-        <a href="/blog.html">Blog</a>
-        <a href="/admin.html" aria-current="page">Admin</a>
+  <header class="top-nav">
+    <div class="top-nav-inner">
+      <a id="site-title" class="brand" href="/">
+        <img id="brand-image" class="brand-image" src="/img/greg.jpg" alt="Greg Gagnaux" />
+        <span id="brand-title" class="brand-title">Greg Gagnaux</span>
+      </a>
+      <nav class="top-menu">
+        <button type="button" data-href="/">Home</button>
+        <button type="button" data-href="/blog.html">Blog</button>
+        <button type="button" data-href="/admin.html" aria-current="page">Admin</button>
       </nav>
+      <div class="theme-control">
+        <label for="theme-select">Theme</label>
+        <select id="theme-select">
+          <option value="system">System</option>
+          <option value="light">Light</option>
+          <option value="dark">Dark</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <main class="container admin-layout">
+    <header class="page-header admin-page-header">
+      <h1>Admin</h1>
+      <button id="logout-btn" type="button" class="ghost inline-button hidden">Log out</button>
     </header>
 
     <section id="login-section" class="card narrow">
@@ -31,12 +52,11 @@
     <section id="dashboard" class="hidden">
       <div class="toolbar">
         <h2>Posts</h2>
-        <button id="logout-btn" type="button" class="ghost">Log out</button>
       </div>
 
-      <section class="card">
+      <section class="card admin-card-config">
         <h3>Site Config</h3>
-        <p class="muted small">Edit homepage content. Keep valid JSON format.</p>
+        <p class="muted small">Edit homepage/nav content. Set <code>brandImage</code> to change the top-left logo image.</p>
         <textarea id="config-json" rows="14"></textarea>
         <div class="actions">
           <button id="save-config-btn" type="button">Save config</button>
@@ -44,7 +64,7 @@
         <p id="config-status" class="small"></p>
       </section>
 
-      <section class="card">
+      <section class="card admin-card-new-post">
         <h3 id="form-title">New Post</h3>
         <form id="post-form" class="stack">
           <input type="hidden" name="originalSlug" />
@@ -70,12 +90,15 @@
         </form>
       </section>
 
-      <section class="card">
+      <section class="card admin-card-all-posts">
         <h3>All Posts</h3>
         <div id="posts-list" class="stack"></div>
       </section>
     </section>
   </main>
+  <footer class="site-footer">
+    <div class="site-footer-inner">Copyright © 2026 Greg Gagnaux. All rights reserved.</div>
+  </footer>
 
   <script type="module" src="/js/admin.js"></script>
 </body>
