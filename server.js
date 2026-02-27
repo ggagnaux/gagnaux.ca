@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import session from "express-session";
 import multer from "multer";
@@ -25,6 +26,13 @@ const DEFAULT_CONFIG = {
   brandImageAlt: "Greg Gagnaux",
   tagline: "Work highlights, writing, and links.",
   about: "This is a minimal personal site for sharing projects, notes, and links.",
+  projects: [
+    {
+      name: "Project Name",
+      description: "Short project description.",
+      url: "https://example.com"
+    }
+  ],
   highlights: [
     "Shipped practical web projects.",
     "Focused on clean UI and maintainable code.",
@@ -92,6 +100,16 @@ function postPathFromSlug(slug) {
 
 function normalizeConfig(input) {
   const cfg = typeof input === "object" && input ? input : {};
+  const projects = Array.isArray(cfg.projects)
+    ? cfg.projects
+        .filter((item) => item && typeof item === "object")
+        .map((item) => ({
+          name: String(item.name || "").trim(),
+          description: String(item.description || "").trim(),
+          url: String(item.url || "").trim()
+        }))
+        .filter((item) => item.name)
+    : DEFAULT_CONFIG.projects;
   const highlights = Array.isArray(cfg.highlights)
     ? cfg.highlights.map((item) => String(item).trim()).filter(Boolean)
     : DEFAULT_CONFIG.highlights;
@@ -111,6 +129,7 @@ function normalizeConfig(input) {
     brandImageAlt: String(cfg.brandImageAlt || cfg.siteTitle || DEFAULT_CONFIG.brandImageAlt).trim(),
     tagline: String(cfg.tagline || DEFAULT_CONFIG.tagline).trim(),
     about: String(cfg.about || DEFAULT_CONFIG.about).trim(),
+    projects,
     highlights,
     links
   };
@@ -199,8 +218,10 @@ function buildMarkdown(post) {
 app.post("/api/admin/login", (req, res) => {
   const username = String(req.body.username || "");
   const password = String(req.body.password || "");
-  const expectedUser = process.env.ADMIN_USER || "admin";
-  const expectedPass = process.env.ADMIN_PASS || "admin123";
+  // const expectedUser = process.env.ADMIN_USER || "admin";
+  // const expectedPass = process.env.ADMIN_PASS || "admin123";
+  const expectedUser = process.env.ADMIN_USER;
+  const expectedPass = process.env.ADMIN_PASS;
 
   if (username === expectedUser && password === expectedPass) {
     req.session.authenticated = true;

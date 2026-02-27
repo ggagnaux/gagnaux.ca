@@ -4,6 +4,23 @@
   "brandImageAlt": "Greg Gagnaux",
   "tagline": "Work highlights, writing, and links.",
   "about": "Thanks for stopping by!  This is my minimal personal site for sharing projects, notes, and links. I also have a site dedicated to my visual art at [www.toji.studio](http://www.toji.ca)",
+  "projects": [
+    {
+      "name": "Toji Studios Portfolio",
+      "description": "My visual art portfolio website.",
+      "url": "http://www.toji.ca"
+    },
+    {
+      "name": "Musical Scale Visualizer",
+      "description": "Pick a root note, a scale and see what keys on the piano are appropriate... Plays sounds too!",
+      "url": "/playground/MusicalScaleVisualizer/index.html"
+    },
+    {
+      "name": "EP-133 Simulator",
+      "description": "Web-based simulator for a Teenage Engineering EP-133 sequencer device.",
+      "url": "/playground/EP-133Simulator/index.html"
+    }
+  ],
   "highlights": [
     "Shipped practical web projects.",
     "Focused on clean UI and maintainable code.",

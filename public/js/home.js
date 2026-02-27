@@ -1,10 +1,10 @@
 const taglineEl = document.getElementById("site-tagline");
 const aboutEl = document.getElementById("about-text");
-const highlightsEl = document.getElementById("highlights-list");
+const projectsEl = document.getElementById("projects-list");
 const linksEl = document.getElementById("links-list");
 
 loadConfig().catch(() => {
-  renderHighlights([]);
+  renderProjects([]);
   renderLinks([]);
 });
 
@@ -17,17 +17,45 @@ async function loadConfig() {
   aboutEl.innerHTML = renderTextWithLinks(config.about || "");
 
   document.title = String(config.siteTitle || "gagnaux.ca");
-  renderHighlights(Array.isArray(config.highlights) ? config.highlights : []);
+  renderProjects(Array.isArray(config.projects) ? config.projects : []);
   renderLinks(Array.isArray(config.links) ? config.links : []);
 }
 
-function renderHighlights(highlights) {
-  if (!highlights.length) {
-    highlightsEl.innerHTML = "<li>No highlights configured yet.</li>";
+function renderProjects(projects) {
+  if (!projects.length) {
+    projectsEl.innerHTML = "<li>No projects configured yet.</li>";
     return;
   }
 
-  highlightsEl.innerHTML = highlights.map((item) => `<li>${renderTextWithLinks(item)}</li>`).join("");
+  projectsEl.innerHTML = projects
+    .map((project, index) => {
+      const name = escapeHtml(project?.name || `Project ${index + 1}`);
+      const description = renderTextWithLinks(project?.description || "");
+      const url = normalizeHref(project?.url || "");
+      const buttonHtml = url
+        ? `<button type="button" class="project-link-btn" data-project-url="${escapeAttribute(url)}">Open Project</button>`
+        : `<button type="button" class="project-link-btn" disabled>No Link</button>`;
+
+      return `
+        <li class="project-item">
+          <div class="project-text">
+            <strong>${name}</strong>
+            ${description ? `<p>${description}</p>` : ""}
+          </div>
+          ${buttonHtml}
+        </li>
+      `;
+    })
+    .join("");
+
+  projectsEl.querySelectorAll(".project-link-btn[data-project-url]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const url = button.getAttribute("data-project-url");
+      if (url) {
+        window.open(url, "_blank", "noopener,noreferrer");
+      }
+    });
+  });
 }
 
 function renderLinks(links) {
