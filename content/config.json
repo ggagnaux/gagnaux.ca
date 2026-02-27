@@ -1,0 +1,24 @@
+{
+  "siteTitle": "gagnaux.ca",
+  "tagline": "Work highlights, writing, and links.",
+  "about": "This is a minimal personal site for sharing projects, notes, and links.",
+  "highlights": [
+    "Shipped practical web projects.",
+    "Focused on clean UI and maintainable code.",
+    "Published concise technical notes."
+  ],
+  "links": [
+    {
+      "label": "GitHub",
+      "url": "https://github.com/ggagnaux"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/ggagnaux"
+    },
+    {
+      "label": "Kohd & Art",
+      "url": "http://www.kohd.co"
+    }
+  ]
+}
