@@ -15,6 +15,10 @@ const logoutBtn = document.getElementById("logout-btn");
 const configJson = document.getElementById("config-json");
 const saveConfigBtn = document.getElementById("save-config-btn");
 const configStatus = document.getElementById("config-status");
+const tabBlogBtn = document.getElementById("tab-blog-btn");
+const tabConfigBtn = document.getElementById("tab-config-btn");
+const tabBlogPanel = document.getElementById("tab-blog-panel");
+const tabConfigPanel = document.getElementById("tab-config-panel");
 
 init().catch(showLogin);
 
@@ -59,6 +63,9 @@ logoutBtn.addEventListener("click", async () => {
   await fetch("/api/admin/logout", { method: "POST" });
   showLogin();
 });
+
+tabBlogBtn.addEventListener("click", () => setAdminTab("blog"));
+tabConfigBtn.addEventListener("click", () => setAdminTab("config"));
 
 saveConfigBtn.addEventListener("click", async () => {
   configStatus.textContent = "Saving config...";
@@ -267,7 +274,16 @@ function showDashboard() {
   loginSection.classList.add("hidden");
   dashboard.classList.remove("hidden");
   logoutBtn.classList.remove("hidden");
+  setAdminTab("blog");
   if (!postForm.date.value) postForm.date.value = new Date().toISOString().slice(0, 10);
+}
+
+function setAdminTab(tabName) {
+  const isBlog = tabName === "blog";
+  tabBlogPanel.classList.toggle("hidden", !isBlog);
+  tabConfigPanel.classList.toggle("hidden", isBlog);
+  tabBlogBtn.setAttribute("aria-selected", String(isBlog));
+  tabConfigBtn.setAttribute("aria-selected", String(!isBlog));
 }
 
 function escapeHtml(value) {

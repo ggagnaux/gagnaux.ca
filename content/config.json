@@ -19,6 +19,11 @@
       "name": "EP-133 Simulator",
       "description": "Web-based simulator for a Teenage Engineering EP-133 sequencer device.",
       "url": "/playground/EP-133Simulator/index.html"
+    },
+    {
+      "name": "Periodic Table",
+      "description": "Web-based periodic table",
+      "url": "/playground/PeriodicTable/index.html"
     }
   ],
   "highlights": [
