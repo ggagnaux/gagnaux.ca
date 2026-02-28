@@ -89,10 +89,37 @@
       <section id="tab-config-panel" class="hidden">
         <section class="card admin-card-config">
           <h3>Site Config</h3>
-          <p class="muted small">Edit homepage/nav content. Set <code>brandImage</code> to change the top-left logo image.</p>
-          <textarea id="config-json" rows="14"></textarea>
+
+          <form id="site-config-form" class="stack">
+            <label>Site Title<input id="cfg-site-title" name="siteTitle" required /></label>
+            <label>Brand Image URL<input id="cfg-brand-image" name="brandImage" placeholder="/img/greg.jpg" /></label>
+            <label>Brand Image Alt<input id="cfg-brand-image-alt" name="brandImageAlt" /></label>
+            <label>Tagline<input id="cfg-tagline" name="tagline" /></label>
+            <label>About<textarea id="cfg-about" name="about" rows="4"></textarea></label>
+            <label>Highlights (one per line)<textarea id="cfg-highlights" name="highlights" rows="5"></textarea></label>
+
+            <div class="config-collection config-collection-projects">
+              <div class="config-collection-head">
+                <h4>Projects</h4>
+                <button id="add-project-btn" type="button" class="ghost inline-button">Add Project</button>
+              </div>
+              <div id="projects-editor" class="stack"></div>
+            </div>
+
+            <div class="config-collection config-collection-links">
+              <div class="config-collection-head">
+                <h4>Links</h4>
+                <button id="add-link-btn" type="button" class="ghost inline-button">Add Link</button>
+              </div>
+              <div id="links-editor" class="stack"></div>
+            </div>
+
+            <div class="actions">
+              <button id="save-config-btn" type="submit">Save config</button>
+            </div>
+          </form>
           <div class="actions">
-            <button id="save-config-btn" type="button">Save config</button>
+            <button id="reset-config-btn" type="button" class="ghost">Reset Form</button>
           </div>
           <p id="config-status" class="small"></p>
         </section>

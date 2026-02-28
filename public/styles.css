@@ -235,7 +235,64 @@ body.nav-compact .theme-control label {
 }
 
 .admin-card-config {
-  background: color-mix(in srgb, var(--surface) 88%, #cdebdc 12%);
+  background: color-mix(in srgb, var(--surface) 84%, #bfe5d2 16%);
+  border-color: color-mix(in srgb, var(--border) 65%, #4f9d77 35%);
+}
+
+.config-collection {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+  background: color-mix(in srgb, var(--surface) 90%, var(--bg) 10%);
+}
+
+.config-collection-projects {
+  background: color-mix(in srgb, var(--surface) 84%, #c7ddff 16%);
+  border-color: color-mix(in srgb, var(--border) 65%, #4d79b8 35%);
+}
+
+.config-collection-links {
+  background: color-mix(in srgb, var(--surface) 84%, #f8ddb1 16%);
+  border-color: color-mix(in srgb, var(--border) 65%, #ad7e2c 35%);
+}
+
+.config-collection-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.config-collection-head h4 {
+  margin: 0;
+}
+
+.config-row {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.config-row-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+.config-row.is-dragging {
+  opacity: 0.65;
+  border-style: dashed;
 }
 
 .admin-card-new-post {

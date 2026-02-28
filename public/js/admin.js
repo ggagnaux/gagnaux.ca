@@ -12,15 +12,30 @@ const uploadBtn = document.getElementById("upload-btn");
 const imageInput = document.getElementById("image-input");
 const resetBtn = document.getElementById("reset-btn");
 const logoutBtn = document.getElementById("logout-btn");
-const configJson = document.getElementById("config-json");
+const configForm = document.getElementById("site-config-form");
+const cfgSiteTitle = document.getElementById("cfg-site-title");
+const cfgBrandImage = document.getElementById("cfg-brand-image");
+const cfgBrandImageAlt = document.getElementById("cfg-brand-image-alt");
+const cfgTagline = document.getElementById("cfg-tagline");
+const cfgAbout = document.getElementById("cfg-about");
+const cfgHighlights = document.getElementById("cfg-highlights");
+const projectsEditor = document.getElementById("projects-editor");
+const linksEditor = document.getElementById("links-editor");
+const addProjectBtn = document.getElementById("add-project-btn");
+const addLinkBtn = document.getElementById("add-link-btn");
 const saveConfigBtn = document.getElementById("save-config-btn");
+const resetConfigBtn = document.getElementById("reset-config-btn");
 const configStatus = document.getElementById("config-status");
 const tabBlogBtn = document.getElementById("tab-blog-btn");
 const tabConfigBtn = document.getElementById("tab-config-btn");
 const tabBlogPanel = document.getElementById("tab-blog-panel");
 const tabConfigPanel = document.getElementById("tab-config-panel");
+let lastLoadedConfig = null;
+let draggedConfigRow = null;
 
 init().catch(showLogin);
+wireConfigDragAndDrop(projectsEditor);
+wireConfigDragAndDrop(linksEditor);
 
 async function init() {
   const res = await fetch("/api/admin/session");
@@ -67,16 +82,10 @@ logoutBtn.addEventListener("click", async () => {
 tabBlogBtn.addEventListener("click", () => setAdminTab("blog"));
 tabConfigBtn.addEventListener("click", () => setAdminTab("config"));
 
-saveConfigBtn.addEventListener("click", async () => {
+configForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
   configStatus.textContent = "Saving config...";
-  let parsed;
-
-  try {
-    parsed = JSON.parse(configJson.value);
-  } catch {
-    configStatus.textContent = "Config is not valid JSON.";
-    return;
-  }
+  const parsed = serializeConfigForm();
 
   const res = await fetch("/api/admin/config", {
     method: "PUT",
@@ -90,8 +99,24 @@ saveConfigBtn.addEventListener("click", async () => {
     return;
   }
 
-  configJson.value = JSON.stringify(data.config, null, 2);
+  lastLoadedConfig = data.config;
+  populateConfigForm(data.config);
   configStatus.textContent = "Config saved.";
+});
+
+addProjectBtn.addEventListener("click", () => {
+  addProjectRow();
+});
+
+addLinkBtn.addEventListener("click", () => {
+  addLinkRow();
+});
+
+resetConfigBtn.addEventListener("click", () => {
+  if (lastLoadedConfig) {
+    populateConfigForm(lastLoadedConfig);
+    configStatus.textContent = "Form reset.";
+  }
 });
 
 uploadBtn.addEventListener("click", async () => {
@@ -201,8 +226,167 @@ async function loadConfig() {
   }
 
   const config = await res.json();
-  configJson.value = JSON.stringify(config, null, 2);
+  lastLoadedConfig = config;
+  populateConfigForm(config);
   configStatus.textContent = "";
+}
+
+function populateConfigForm(config) {
+  cfgSiteTitle.value = config.siteTitle || "";
+  cfgBrandImage.value = config.brandImage || "";
+  cfgBrandImageAlt.value = config.brandImageAlt || "";
+  cfgTagline.value = config.tagline || "";
+  cfgAbout.value = config.about || "";
+  cfgHighlights.value = Array.isArray(config.highlights) ? config.highlights.join("\n") : "";
+
+  projectsEditor.innerHTML = "";
+  const projects = Array.isArray(config.projects) && config.projects.length ? config.projects : [{}];
+  projects.forEach((project) => {
+    addProjectRow(project);
+  });
+
+  linksEditor.innerHTML = "";
+  const links = Array.isArray(config.links) && config.links.length ? config.links : [{}];
+  links.forEach((link) => {
+    addLinkRow(link);
+  });
+}
+
+function addProjectRow(project = {}) {
+  const row = document.createElement("div");
+  row.className = "config-row";
+  row.innerHTML = `
+    <label>Project Name<input data-role="project-name" value="${escapeAttribute(project.name || "")}" /></label>
+    <label>Project Description<input data-role="project-description" value="${escapeAttribute(project.description || "")}" /></label>
+    <label>Project URL<input data-role="project-url" value="${escapeAttribute(project.url || "")}" /></label>
+    <div class="config-row-actions">
+      <button type="button" class="ghost inline-button drag-handle" data-action="drag-row" draggable="true" aria-label="Drag to reorder">Reorder</button>
+      <button type="button" class="ghost inline-button" data-action="remove-row" data-item-type="project">Remove</button>
+    </div>
+  `;
+  projectsEditor.appendChild(row);
+  bindRemoveButton(row);
+}
+
+function addLinkRow(link = {}) {
+  const row = document.createElement("div");
+  row.className = "config-row";
+  row.innerHTML = `
+    <label>Link Label<input data-role="link-label" value="${escapeAttribute(link.label || "")}" /></label>
+    <label>Link URL<input data-role="link-url" value="${escapeAttribute(link.url || "")}" /></label>
+    <div class="config-row-actions">
+      <button type="button" class="ghost inline-button drag-handle" data-action="drag-row" draggable="true" aria-label="Drag to reorder">Reorder</button>
+      <button type="button" class="ghost inline-button" data-action="remove-row" data-item-type="link">Remove</button>
+    </div>
+  `;
+  linksEditor.appendChild(row);
+  bindRemoveButton(row);
+}
+
+function bindRemoveButton(row) {
+  const removeBtn = row.querySelector("[data-action='remove-row']");
+  removeBtn.addEventListener("click", () => {
+    const itemType = removeBtn.dataset.itemType === "link" ? "link" : "project";
+    const confirmed = window.confirm(`Remove this ${itemType} item?`);
+    if (!confirmed) return;
+    row.remove();
+  });
+}
+
+function wireConfigDragAndDrop(container) {
+  container.addEventListener("dragstart", (event) => {
+    const handle = event.target.closest("[data-action='drag-row']");
+    if (!handle) return;
+
+    const row = handle.closest(".config-row");
+    if (!row) return;
+
+    draggedConfigRow = row;
+    row.classList.add("is-dragging");
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", "reorder-row");
+    }
+  });
+
+  container.addEventListener("dragend", () => {
+    if (draggedConfigRow) {
+      draggedConfigRow.classList.remove("is-dragging");
+      draggedConfigRow = null;
+    }
+  });
+
+  container.addEventListener("dragover", (event) => {
+    if (!draggedConfigRow) return;
+    event.preventDefault();
+
+    const nextRow = getDragNextRow(container, event.clientY);
+    if (!nextRow) {
+      container.appendChild(draggedConfigRow);
+      return;
+    }
+
+    if (nextRow !== draggedConfigRow) {
+      container.insertBefore(draggedConfigRow, nextRow);
+    }
+  });
+
+  container.addEventListener("drop", (event) => {
+    if (!draggedConfigRow) return;
+    event.preventDefault();
+    draggedConfigRow.classList.remove("is-dragging");
+    draggedConfigRow = null;
+  });
+}
+
+function getDragNextRow(container, y) {
+  const rows = Array.from(container.querySelectorAll(".config-row:not(.is-dragging)"));
+  let bestOffset = Number.NEGATIVE_INFINITY;
+  let bestRow = null;
+
+  rows.forEach((row) => {
+    const rect = row.getBoundingClientRect();
+    const offset = y - rect.top - rect.height / 2;
+    if (offset < 0 && offset > bestOffset) {
+      bestOffset = offset;
+      bestRow = row;
+    }
+  });
+
+  return bestRow;
+}
+
+function serializeConfigForm() {
+  const projects = Array.from(projectsEditor.querySelectorAll(".config-row"))
+    .map((row) => ({
+      name: row.querySelector("[data-role='project-name']").value.trim(),
+      description: row.querySelector("[data-role='project-description']").value.trim(),
+      url: row.querySelector("[data-role='project-url']").value.trim()
+    }))
+    .filter((project) => project.name);
+
+  const links = Array.from(linksEditor.querySelectorAll(".config-row"))
+    .map((row) => ({
+      label: row.querySelector("[data-role='link-label']").value.trim(),
+      url: row.querySelector("[data-role='link-url']").value.trim()
+    }))
+    .filter((link) => link.label && link.url);
+
+  const highlights = cfgHighlights.value
+    .split("\n")
+    .map((item) => item.trim())
+    .filter(Boolean);
+
+  return {
+    siteTitle: cfgSiteTitle.value.trim(),
+    brandImage: cfgBrandImage.value.trim(),
+    brandImageAlt: cfgBrandImageAlt.value.trim(),
+    tagline: cfgTagline.value.trim(),
+    about: cfgAbout.value.trim(),
+    highlights,
+    projects,
+    links
+  };
 }
 
 function editPost(slug, posts) {
