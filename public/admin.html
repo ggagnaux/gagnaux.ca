@@ -94,7 +94,6 @@
             <label>Site Title<input id="cfg-site-title" name="siteTitle" required /></label>
             <label>Brand Image URL<input id="cfg-brand-image" name="brandImage" placeholder="/img/greg.jpg" /></label>
             <label>Brand Image Alt<input id="cfg-brand-image-alt" name="brandImageAlt" /></label>
-            <label>Tagline<input id="cfg-tagline" name="tagline" /></label>
             <label>About<textarea id="cfg-about" name="about" rows="4"></textarea></label>
             <label>Highlights (one per line)<textarea id="cfg-highlights" name="highlights" rows="5"></textarea></label>
 
@@ -103,7 +102,23 @@
                 <h4>Projects</h4>
                 <button id="add-project-btn" type="button" class="ghost inline-button">Add Project</button>
               </div>
-              <div id="projects-editor" class="stack"></div>
+              <div class="projects-table-wrap">
+                <table class="projects-table">
+                  <thead>
+                    <tr>
+                      <th class="reorder-col"></th>
+                      <th class="checkbox-col"></th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>URL</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projects-editor"></tbody>
+                </table>
+              </div>
+              <div class="config-remove-actions">
+                <button id="remove-projects-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+              </div>
             </div>
 
             <div class="config-collection config-collection-links">
@@ -111,7 +126,22 @@
                 <h4>Links</h4>
                 <button id="add-link-btn" type="button" class="ghost inline-button">Add Link</button>
               </div>
-              <div id="links-editor" class="stack"></div>
+              <div class="links-table-wrap">
+                <table class="links-table">
+                  <thead>
+                    <tr>
+                      <th class="reorder-col"></th>
+                      <th class="checkbox-col"></th>
+                      <th>Label</th>
+                      <th>URL</th>
+                    </tr>
+                  </thead>
+                  <tbody id="links-editor"></tbody>
+                </table>
+              </div>
+              <div class="config-remove-actions">
+                <button id="remove-links-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+              </div>
             </div>
 
             <div class="actions">

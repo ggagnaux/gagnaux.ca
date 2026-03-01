@@ -13,8 +13,8 @@ async function loadConfig() {
   if (!res.ok) return;
   const config = await res.json();
 
-  taglineEl.innerHTML = renderTextWithLinks(config.tagline || "");
-  aboutEl.innerHTML = renderTextWithLinks(config.about || "");
+  if (taglineEl) taglineEl.innerHTML = renderTextWithLinks(config.tagline || "");
+  if (aboutEl) aboutEl.innerHTML = renderTextWithLinks(config.about || "");
 
   document.title = String(config.siteTitle || "gagnaux.ca");
   renderProjects(Array.isArray(config.projects) ? config.projects : []);
@@ -22,6 +22,7 @@ async function loadConfig() {
 }
 
 function renderProjects(projects) {
+  if (!projectsEl) return;
   if (!projects.length) {
     projectsEl.innerHTML = "<li>No projects configured yet.</li>";
     return;
@@ -59,6 +60,7 @@ function renderProjects(projects) {
 }
 
 function renderLinks(links) {
+  if (!linksEl) return;
   if (!links.length) {
     linksEl.innerHTML = "<li>No links configured yet.</li>";
     return;

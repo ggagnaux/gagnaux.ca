@@ -16,26 +16,33 @@ const configForm = document.getElementById("site-config-form");
 const cfgSiteTitle = document.getElementById("cfg-site-title");
 const cfgBrandImage = document.getElementById("cfg-brand-image");
 const cfgBrandImageAlt = document.getElementById("cfg-brand-image-alt");
-const cfgTagline = document.getElementById("cfg-tagline");
 const cfgAbout = document.getElementById("cfg-about");
 const cfgHighlights = document.getElementById("cfg-highlights");
 const projectsEditor = document.getElementById("projects-editor");
 const linksEditor = document.getElementById("links-editor");
 const addProjectBtn = document.getElementById("add-project-btn");
+const removeProjectsBtn = document.getElementById("remove-projects-btn");
 const addLinkBtn = document.getElementById("add-link-btn");
-const saveConfigBtn = document.getElementById("save-config-btn");
+const removeLinksBtn = document.getElementById("remove-links-btn");
 const resetConfigBtn = document.getElementById("reset-config-btn");
 const configStatus = document.getElementById("config-status");
 const tabBlogBtn = document.getElementById("tab-blog-btn");
 const tabConfigBtn = document.getElementById("tab-config-btn");
 const tabBlogPanel = document.getElementById("tab-blog-panel");
 const tabConfigPanel = document.getElementById("tab-config-panel");
+
 let lastLoadedConfig = null;
-let draggedConfigRow = null;
+let configSaveInFlight = false;
+let configSaveQueued = false;
+
+let draggedProjectRow = null;
+let draggedProjectStartIndex = -1;
+let draggedLinkRow = null;
+let draggedLinkStartIndex = -1;
 
 init().catch(showLogin);
-wireConfigDragAndDrop(projectsEditor);
-wireConfigDragAndDrop(linksEditor);
+wireProjectsTableDragAndDrop();
+wireLinksTableDragAndDrop();
 
 async function init() {
   const res = await fetch("/api/admin/session");
@@ -85,31 +92,53 @@ tabConfigBtn.addEventListener("click", () => setAdminTab("config"));
 configForm.addEventListener("submit", async (event) => {
   event.preventDefault();
   configStatus.textContent = "Saving config...";
-  const parsed = serializeConfigForm();
-
-  const res = await fetch("/api/admin/config", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(parsed)
-  });
-  const data = await res.json();
-
-  if (!res.ok) {
-    configStatus.textContent = data.error || "Could not save config.";
-    return;
-  }
-
-  lastLoadedConfig = data.config;
-  populateConfigForm(data.config);
-  configStatus.textContent = "Config saved.";
+  await persistConfig("Config saved.");
 });
 
 addProjectBtn.addEventListener("click", () => {
-  addProjectRow();
+  addProjectTableRow();
+  syncRemoveProjectsButtonState();
+});
+
+removeProjectsBtn.addEventListener("click", async () => {
+  const selectedRows = Array.from(
+    projectsEditor.querySelectorAll("input[data-role='project-select']:checked")
+  ).map((checkbox) => checkbox.closest("tr[data-project-row]"));
+
+  if (!selectedRows.length) return;
+  const confirmed = window.confirm("Remove selected project row(s)?");
+  if (!confirmed) return;
+
+  selectedRows.forEach((row) => row.remove());
+  if (!projectsEditor.querySelector("tr[data-project-row]")) {
+    renderProjectsTable([]);
+  }
+  syncRemoveProjectsButtonState();
+  configStatus.textContent = "Saving config...";
+  await persistConfig("Auto-saved.");
 });
 
 addLinkBtn.addEventListener("click", () => {
-  addLinkRow();
+  addLinkTableRow();
+  syncRemoveLinksButtonState();
+});
+
+removeLinksBtn.addEventListener("click", async () => {
+  const selectedRows = Array.from(
+    linksEditor.querySelectorAll("input[data-role='link-select']:checked")
+  ).map((checkbox) => checkbox.closest("tr[data-link-row]"));
+
+  if (!selectedRows.length) return;
+  const confirmed = window.confirm("Remove selected link row(s)?");
+  if (!confirmed) return;
+
+  selectedRows.forEach((row) => row.remove());
+  if (!linksEditor.querySelector("tr[data-link-row]")) {
+    renderLinksTable([]);
+  }
+  syncRemoveLinksButtonState();
+  configStatus.textContent = "Saving config...";
+  await persistConfig("Auto-saved.");
 });
 
 resetConfigBtn.addEventListener("click", () => {
@@ -117,6 +146,69 @@ resetConfigBtn.addEventListener("click", () => {
     populateConfigForm(lastLoadedConfig);
     configStatus.textContent = "Form reset.";
   }
+});
+
+projectsEditor.addEventListener("change", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  if (target.dataset.role === "project-select") {
+    const row = target.closest("tr[data-project-row]");
+    if (row) row.classList.toggle("is-selected", target.checked);
+    syncRemoveProjectsButtonState();
+  }
+});
+
+linksEditor.addEventListener("change", (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  if (target.dataset.role === "link-select") {
+    const row = target.closest("tr[data-link-row]");
+    if (row) row.classList.toggle("is-selected", target.checked);
+    syncRemoveLinksButtonState();
+  }
+});
+
+projectsEditor.addEventListener("focusout", async (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  const role = target.dataset.role || "";
+  if (!role.startsWith("project-") || role === "project-select") return;
+
+  const trimmed = target.value.trim();
+  const lastValue = target.dataset.lastValue || "";
+  target.value = trimmed;
+  if (trimmed === lastValue) return;
+
+  target.dataset.lastValue = trimmed;
+  configStatus.textContent = "Saving config...";
+  await persistConfig("Auto-saved.");
+});
+
+linksEditor.addEventListener("focusout", async (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  const role = target.dataset.role || "";
+  if (!role.startsWith("link-") || role === "link-select") return;
+
+  const trimmed = target.value.trim();
+  const lastValue = target.dataset.lastValue || "";
+  target.value = trimmed;
+  if (trimmed === lastValue) return;
+
+  target.dataset.lastValue = trimmed;
+  const row = target.closest("tr[data-link-row]");
+  if (!row) return;
+  const labelValue = row.querySelector("[data-role='link-label']")?.value.trim() || "";
+  const urlValue = row.querySelector("[data-role='link-url']")?.value.trim() || "";
+
+  // Avoid auto-saving half-complete rows; otherwise they are filtered out and disappear.
+  if (!labelValue || !urlValue) {
+    configStatus.textContent = "Link row is incomplete. Fill Label and URL to auto-save.";
+    return;
+  }
+
+  configStatus.textContent = "Saving config...";
+  await persistConfig("Auto-saved.");
 });
 
 uploadBtn.addEventListener("click", async () => {
@@ -235,129 +327,267 @@ function populateConfigForm(config) {
   cfgSiteTitle.value = config.siteTitle || "";
   cfgBrandImage.value = config.brandImage || "";
   cfgBrandImageAlt.value = config.brandImageAlt || "";
-  cfgTagline.value = config.tagline || "";
   cfgAbout.value = config.about || "";
   cfgHighlights.value = Array.isArray(config.highlights) ? config.highlights.join("\n") : "";
 
-  projectsEditor.innerHTML = "";
-  const projects = Array.isArray(config.projects) && config.projects.length ? config.projects : [{}];
-  projects.forEach((project) => {
-    addProjectRow(project);
-  });
-
-  linksEditor.innerHTML = "";
-  const links = Array.isArray(config.links) && config.links.length ? config.links : [{}];
-  links.forEach((link) => {
-    addLinkRow(link);
-  });
+  renderProjectsTable(Array.isArray(config.projects) ? config.projects : []);
+  renderLinksTable(Array.isArray(config.links) ? config.links : []);
 }
 
-function addProjectRow(project = {}) {
-  const row = document.createElement("div");
-  row.className = "config-row";
-  row.innerHTML = `
-    <label>Project Name<input data-role="project-name" value="${escapeAttribute(project.name || "")}" /></label>
-    <label>Project Description<input data-role="project-description" value="${escapeAttribute(project.description || "")}" /></label>
-    <label>Project URL<input data-role="project-url" value="${escapeAttribute(project.url || "")}" /></label>
-    <div class="config-row-actions">
-      <button type="button" class="ghost inline-button drag-handle" data-action="drag-row" draggable="true" aria-label="Drag to reorder">Reorder</button>
-      <button type="button" class="ghost inline-button" data-action="remove-row" data-item-type="project">Remove</button>
-    </div>
+function renderProjectsTable(projects) {
+  if (!projects.length) {
+    projectsEditor.innerHTML = `
+      <tr>
+        <td colspan="5" class="muted small">No projects yet.</td>
+      </tr>
+    `;
+    syncRemoveProjectsButtonState();
+    return;
+  }
+
+  projectsEditor.innerHTML = projects.map((project) => getProjectRowHtml(project)).join("");
+  syncRemoveProjectsButtonState();
+}
+
+function addProjectTableRow(project = {}) {
+  const hasPlaceholder = projectsEditor.querySelector("tr:not([data-project-row])");
+  if (hasPlaceholder) projectsEditor.innerHTML = "";
+  projectsEditor.insertAdjacentHTML("beforeend", getProjectRowHtml(project));
+}
+
+function getProjectRowHtml(project) {
+  const name = String(project?.name || "").trim();
+  const description = String(project?.description || "").trim();
+  const url = String(project?.url || "").trim();
+  return `
+    <tr data-project-row>
+      <td class="reorder-col">
+        <button type="button" class="ghost inline-button project-reorder-handle" data-role="project-drag" draggable="true" aria-label="Drag to reorder row" title="Drag to reorder">↕</button>
+      </td>
+      <td class="checkbox-col">
+        <input type="checkbox" data-role="project-select" />
+      </td>
+      <td><input data-role="project-name" data-last-value="${escapeAttribute(name)}" value="${escapeAttribute(name)}" /></td>
+      <td><input data-role="project-description" data-last-value="${escapeAttribute(description)}" value="${escapeAttribute(description)}" /></td>
+      <td><input data-role="project-url" data-last-value="${escapeAttribute(url)}" value="${escapeAttribute(url)}" /></td>
+    </tr>
   `;
-  projectsEditor.appendChild(row);
-  bindRemoveButton(row);
 }
 
-function addLinkRow(link = {}) {
-  const row = document.createElement("div");
-  row.className = "config-row";
-  row.innerHTML = `
-    <label>Link Label<input data-role="link-label" value="${escapeAttribute(link.label || "")}" /></label>
-    <label>Link URL<input data-role="link-url" value="${escapeAttribute(link.url || "")}" /></label>
-    <div class="config-row-actions">
-      <button type="button" class="ghost inline-button drag-handle" data-action="drag-row" draggable="true" aria-label="Drag to reorder">Reorder</button>
-      <button type="button" class="ghost inline-button" data-action="remove-row" data-item-type="link">Remove</button>
-    </div>
+function syncRemoveProjectsButtonState() {
+  const rows = projectsEditor.querySelectorAll("tr[data-project-row]").length;
+  const selected = projectsEditor.querySelectorAll("input[data-role='project-select']:checked").length;
+  const shouldShow = rows > 0 && selected > 0;
+  removeProjectsBtn.disabled = !shouldShow;
+  removeProjectsBtn.classList.toggle("hidden", !shouldShow);
+}
+
+function renderLinksTable(links) {
+  if (!links.length) {
+    linksEditor.innerHTML = `
+      <tr>
+        <td colspan="4" class="muted small">No links yet.</td>
+      </tr>
+    `;
+    syncRemoveLinksButtonState();
+    return;
+  }
+
+  linksEditor.innerHTML = links.map((link) => getLinkRowHtml(link)).join("");
+  syncRemoveLinksButtonState();
+}
+
+function addLinkTableRow(link = {}) {
+  const hasPlaceholder = linksEditor.querySelector("tr:not([data-link-row])");
+  if (hasPlaceholder) linksEditor.innerHTML = "";
+  linksEditor.insertAdjacentHTML("beforeend", getLinkRowHtml(link));
+}
+
+function getLinkRowHtml(link) {
+  const label = String(link?.label || "").trim();
+  const url = String(link?.url || "").trim();
+  return `
+    <tr data-link-row>
+      <td class="reorder-col">
+        <button type="button" class="ghost inline-button project-reorder-handle" data-role="link-drag" draggable="true" aria-label="Drag to reorder row" title="Drag to reorder">↕</button>
+      </td>
+      <td class="checkbox-col">
+        <input type="checkbox" data-role="link-select" />
+      </td>
+      <td><input data-role="link-label" data-last-value="${escapeAttribute(label)}" value="${escapeAttribute(label)}" /></td>
+      <td><input data-role="link-url" data-last-value="${escapeAttribute(url)}" value="${escapeAttribute(url)}" /></td>
+    </tr>
   `;
-  linksEditor.appendChild(row);
-  bindRemoveButton(row);
 }
 
-function bindRemoveButton(row) {
-  const removeBtn = row.querySelector("[data-action='remove-row']");
-  removeBtn.addEventListener("click", () => {
-    const itemType = removeBtn.dataset.itemType === "link" ? "link" : "project";
-    const confirmed = window.confirm(`Remove this ${itemType} item?`);
-    if (!confirmed) return;
-    row.remove();
-  });
+function syncRemoveLinksButtonState() {
+  const rows = linksEditor.querySelectorAll("tr[data-link-row]").length;
+  const selected = linksEditor.querySelectorAll("input[data-role='link-select']:checked").length;
+  const shouldShow = rows > 0 && selected > 0;
+  removeLinksBtn.disabled = !shouldShow;
+  removeLinksBtn.classList.toggle("hidden", !shouldShow);
 }
 
-function wireConfigDragAndDrop(container) {
-  container.addEventListener("dragstart", (event) => {
-    const handle = event.target.closest("[data-action='drag-row']");
+function wireProjectsTableDragAndDrop() {
+  projectsEditor.addEventListener("dragstart", (event) => {
+    const handle = event.target.closest("[data-role='project-drag']");
     if (!handle) return;
 
-    const row = handle.closest(".config-row");
+    const row = handle.closest("tr[data-project-row]");
     if (!row) return;
 
-    draggedConfigRow = row;
+    draggedProjectRow = row;
+    draggedProjectStartIndex = getProjectRowIndex(row);
     row.classList.add("is-dragging");
     if (event.dataTransfer) {
       event.dataTransfer.effectAllowed = "move";
-      event.dataTransfer.setData("text/plain", "reorder-row");
+      event.dataTransfer.setData("text/plain", "project-row-reorder");
     }
   });
 
-  container.addEventListener("dragend", () => {
-    if (draggedConfigRow) {
-      draggedConfigRow.classList.remove("is-dragging");
-      draggedConfigRow = null;
-    }
-  });
-
-  container.addEventListener("dragover", (event) => {
-    if (!draggedConfigRow) return;
+  projectsEditor.addEventListener("dragover", (event) => {
+    if (!draggedProjectRow) return;
     event.preventDefault();
 
-    const nextRow = getDragNextRow(container, event.clientY);
+    const nextRow = getNextProjectRow(event.clientY);
     if (!nextRow) {
-      container.appendChild(draggedConfigRow);
+      projectsEditor.appendChild(draggedProjectRow);
       return;
     }
 
-    if (nextRow !== draggedConfigRow) {
-      container.insertBefore(draggedConfigRow, nextRow);
+    if (nextRow !== draggedProjectRow) {
+      projectsEditor.insertBefore(draggedProjectRow, nextRow);
     }
   });
 
-  container.addEventListener("drop", (event) => {
-    if (!draggedConfigRow) return;
+  projectsEditor.addEventListener("drop", async (event) => {
+    if (!draggedProjectRow) return;
     event.preventDefault();
-    draggedConfigRow.classList.remove("is-dragging");
-    draggedConfigRow = null;
+
+    const droppedRow = draggedProjectRow;
+    const endIndex = getProjectRowIndex(droppedRow);
+    droppedRow.classList.remove("is-dragging");
+    draggedProjectRow = null;
+
+    if (draggedProjectStartIndex !== -1 && endIndex !== -1 && draggedProjectStartIndex !== endIndex) {
+      configStatus.textContent = "Saving config...";
+      await persistConfig("Auto-saved.");
+    }
+    draggedProjectStartIndex = -1;
+  });
+
+  projectsEditor.addEventListener("dragend", () => {
+    if (draggedProjectRow) {
+      draggedProjectRow.classList.remove("is-dragging");
+      draggedProjectRow = null;
+    }
+    draggedProjectStartIndex = -1;
   });
 }
 
-function getDragNextRow(container, y) {
-  const rows = Array.from(container.querySelectorAll(".config-row:not(.is-dragging)"));
-  let bestOffset = Number.NEGATIVE_INFINITY;
-  let bestRow = null;
+function wireLinksTableDragAndDrop() {
+  linksEditor.addEventListener("dragstart", (event) => {
+    const handle = event.target.closest("[data-role='link-drag']");
+    if (!handle) return;
+
+    const row = handle.closest("tr[data-link-row]");
+    if (!row) return;
+
+    draggedLinkRow = row;
+    draggedLinkStartIndex = getLinkRowIndex(row);
+    row.classList.add("is-dragging");
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", "link-row-reorder");
+    }
+  });
+
+  linksEditor.addEventListener("dragover", (event) => {
+    if (!draggedLinkRow) return;
+    event.preventDefault();
+
+    const nextRow = getNextLinkRow(event.clientY);
+    if (!nextRow) {
+      linksEditor.appendChild(draggedLinkRow);
+      return;
+    }
+
+    if (nextRow !== draggedLinkRow) {
+      linksEditor.insertBefore(draggedLinkRow, nextRow);
+    }
+  });
+
+  linksEditor.addEventListener("drop", async (event) => {
+    if (!draggedLinkRow) return;
+    event.preventDefault();
+
+    const droppedRow = draggedLinkRow;
+    const endIndex = getLinkRowIndex(droppedRow);
+    droppedRow.classList.remove("is-dragging");
+    draggedLinkRow = null;
+
+    if (draggedLinkStartIndex !== -1 && endIndex !== -1 && draggedLinkStartIndex !== endIndex) {
+      configStatus.textContent = "Saving config...";
+      await persistConfig("Auto-saved.");
+    }
+    draggedLinkStartIndex = -1;
+  });
+
+  linksEditor.addEventListener("dragend", () => {
+    if (draggedLinkRow) {
+      draggedLinkRow.classList.remove("is-dragging");
+      draggedLinkRow = null;
+    }
+    draggedLinkStartIndex = -1;
+  });
+}
+
+function getNextProjectRow(pointerY) {
+  const rows = Array.from(projectsEditor.querySelectorAll("tr[data-project-row]:not(.is-dragging)"));
+  let closest = null;
+  let closestOffset = Number.NEGATIVE_INFINITY;
 
   rows.forEach((row) => {
     const rect = row.getBoundingClientRect();
-    const offset = y - rect.top - rect.height / 2;
-    if (offset < 0 && offset > bestOffset) {
-      bestOffset = offset;
-      bestRow = row;
+    const offset = pointerY - rect.top - rect.height / 2;
+    if (offset < 0 && offset > closestOffset) {
+      closestOffset = offset;
+      closest = row;
     }
   });
 
-  return bestRow;
+  return closest;
+}
+
+function getNextLinkRow(pointerY) {
+  const rows = Array.from(linksEditor.querySelectorAll("tr[data-link-row]:not(.is-dragging)"));
+  let closest = null;
+  let closestOffset = Number.NEGATIVE_INFINITY;
+
+  rows.forEach((row) => {
+    const rect = row.getBoundingClientRect();
+    const offset = pointerY - rect.top - rect.height / 2;
+    if (offset < 0 && offset > closestOffset) {
+      closestOffset = offset;
+      closest = row;
+    }
+  });
+
+  return closest;
+}
+
+function getProjectRowIndex(row) {
+  const rows = Array.from(projectsEditor.querySelectorAll("tr[data-project-row]"));
+  return rows.indexOf(row);
+}
+
+function getLinkRowIndex(row) {
+  const rows = Array.from(linksEditor.querySelectorAll("tr[data-link-row]"));
+  return rows.indexOf(row);
 }
 
 function serializeConfigForm() {
-  const projects = Array.from(projectsEditor.querySelectorAll(".config-row"))
+  const projects = Array.from(projectsEditor.querySelectorAll("tr[data-project-row]"))
     .map((row) => ({
       name: row.querySelector("[data-role='project-name']").value.trim(),
       description: row.querySelector("[data-role='project-description']").value.trim(),
@@ -365,7 +595,7 @@ function serializeConfigForm() {
     }))
     .filter((project) => project.name);
 
-  const links = Array.from(linksEditor.querySelectorAll(".config-row"))
+  const links = Array.from(linksEditor.querySelectorAll("tr[data-link-row]"))
     .map((row) => ({
       label: row.querySelector("[data-role='link-label']").value.trim(),
       url: row.querySelector("[data-role='link-url']").value.trim()
@@ -381,12 +611,45 @@ function serializeConfigForm() {
     siteTitle: cfgSiteTitle.value.trim(),
     brandImage: cfgBrandImage.value.trim(),
     brandImageAlt: cfgBrandImageAlt.value.trim(),
-    tagline: cfgTagline.value.trim(),
+    tagline: String(lastLoadedConfig?.tagline || ""),
     about: cfgAbout.value.trim(),
     highlights,
     projects,
     links
   };
+}
+
+async function persistConfig(successMessage) {
+  if (configSaveInFlight) {
+    configSaveQueued = true;
+    return;
+  }
+
+  configSaveInFlight = true;
+  try {
+    const parsed = serializeConfigForm();
+    const res = await fetch("/api/admin/config", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(parsed)
+    });
+    const data = await res.json();
+
+    if (!res.ok) {
+      configStatus.textContent = data.error || "Could not save config.";
+      return;
+    }
+
+    lastLoadedConfig = data.config;
+    populateConfigForm(data.config);
+    configStatus.textContent = successMessage;
+  } finally {
+    configSaveInFlight = false;
+    if (configSaveQueued) {
+      configSaveQueued = false;
+      await persistConfig("Auto-saved.");
+    }
+  }
 }
 
 function editPost(slug, posts) {

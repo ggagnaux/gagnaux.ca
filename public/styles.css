@@ -234,6 +234,18 @@ body.nav-compact .theme-control label {
   margin-bottom: 1rem;
 }
 
+.home-card-about {
+  background: color-mix(in srgb, var(--surface) 90%, #cbe8dd 10%);
+}
+
+.home-card-projects {
+  background: color-mix(in srgb, var(--surface) 90%, #d6e6ff 10%);
+}
+
+.home-card-links {
+  background: color-mix(in srgb, var(--surface) 90%, #f6dfb7 10%);
+}
+
 .admin-card-config {
   background: color-mix(in srgb, var(--surface) 84%, #bfe5d2 16%);
   border-color: color-mix(in srgb, var(--border) 65%, #4f9d77 35%);
@@ -251,6 +263,106 @@ body.nav-compact .theme-control label {
   border-color: color-mix(in srgb, var(--border) 65%, #4d79b8 35%);
 }
 
+.projects-table-wrap {
+  overflow-x: auto;
+}
+
+.links-table-wrap {
+  overflow-x: auto;
+}
+
+.projects-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.links-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.projects-table th,
+.projects-table td {
+  border: 1px solid var(--border);
+  padding: 0.45rem;
+  vertical-align: middle;
+}
+
+.links-table th,
+.links-table td {
+  border: 1px solid var(--border);
+  padding: 0.45rem;
+  vertical-align: middle;
+}
+
+.projects-table th {
+  background: color-mix(in srgb, var(--surface) 86%, var(--bg) 14%);
+  text-align: left;
+}
+
+.links-table th {
+  background: color-mix(in srgb, var(--surface) 86%, var(--bg) 14%);
+  text-align: left;
+}
+
+.projects-table .checkbox-col {
+  width: 44px;
+  text-align: center;
+}
+
+.links-table .checkbox-col {
+  width: 44px;
+  text-align: center;
+}
+
+.projects-table .reorder-col {
+  width: 52px;
+  text-align: center;
+}
+
+.links-table .reorder-col {
+  width: 52px;
+  text-align: center;
+}
+
+.projects-table .checkbox-col input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.links-table .checkbox-col input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+
+.projects-table tr.is-selected td {
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface) 80%);
+}
+
+.links-table tr.is-selected td {
+  background: color-mix(in srgb, var(--accent) 20%, var(--surface) 80%);
+}
+
+.project-reorder-handle {
+  cursor: grab;
+  width: auto;
+  margin-top: 0;
+  padding: 0.2rem 0.4rem;
+  line-height: 1;
+}
+
+.project-reorder-handle:active {
+  cursor: grabbing;
+}
+
+.projects-table tr.is-dragging td {
+  opacity: 0.65;
+}
+
+.links-table tr.is-dragging td {
+  opacity: 0.65;
+}
+
 .config-collection-links {
   background: color-mix(in srgb, var(--surface) 84%, #f8ddb1 16%);
   border-color: color-mix(in srgb, var(--border) 65%, #ad7e2c 35%);
@@ -266,6 +378,10 @@ body.nav-compact .theme-control label {
 
 .config-collection-head h4 {
   margin: 0;
+}
+
+.config-remove-actions {
+  margin-top: 0.5rem;
 }
 
 .config-row {
@@ -328,6 +444,23 @@ button.ghost {
   background: transparent;
   color: var(--text);
   border-color: var(--accent);
+}
+
+button.danger-button {
+  color: #ffffff;
+  border-color: #ff2a2a;
+  background: #ff2a2a;
+}
+
+button.danger-button:hover:not(:disabled) {
+  background: #e31212;
+  border-color: #e31212;
+}
+
+button.danger-button:disabled {
+  color: var(--muted);
+  border-color: var(--border);
+  background: transparent;
 }
 
 .inline-button {
