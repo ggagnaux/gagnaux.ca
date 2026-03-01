@@ -482,6 +482,22 @@ body.nav-compact .theme-control label {
   background: color-mix(in srgb, var(--surface) 88%, #d7e8ff 12%);
 }
 
+.admin-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.admin-card-head h3 {
+  margin: 0;
+}
+
+.post-draft-toggle {
+  margin-left: auto;
+  white-space: nowrap;
+}
+
 .admin-card-all-posts {
   background: color-mix(in srgb, var(--surface) 88%, #f7dfb3 12%);
 }
@@ -546,6 +562,16 @@ button.danger-button:disabled {
   width: auto;
   margin-top: 0;
   padding: 0.35rem 0.65rem;
+}
+
+#save-config-btn,
+#reset-config-btn {
+  width: 150px;
+  min-width: 9.5rem;
+}
+
+#reset-config-btn {
+  justify-self: end;
 }
 
 .actions, .upload-row {

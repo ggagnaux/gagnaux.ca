@@ -55,8 +55,11 @@
 
       <section id="tab-blog-panel">
         <section class="card admin-card-new-post">
-          <h3 id="form-title">New Post</h3>
           <form id="post-form" class="stack">
+            <div class="admin-card-head">
+              <h3 id="form-title">New Post</h3>
+              <label class="checkbox post-draft-toggle"><input type="checkbox" name="draft" checked /> Draft</label>
+            </div>
             <input type="hidden" name="originalSlug" />
             <label>Title<input name="title" required /></label>
             <label>Slug<input name="slug" placeholder="auto-generated if blank" /></label>
@@ -64,7 +67,6 @@
             <label>Summary<textarea name="summary" rows="2"></textarea></label>
             <label>Tags (comma-separated)<input name="tags" placeholder="javascript, notes" /></label>
             <label>Cover image URL<input name="coverImage" placeholder="/uploads/your-image.jpg" /></label>
-            <label class="checkbox"><input type="checkbox" name="draft" /> Draft</label>
             <label>Content (Markdown)<textarea name="content" rows="14" required></textarea></label>
 
             <div class="upload-row">
@@ -156,11 +158,9 @@
 
             <div class="actions">
               <button id="save-config-btn" type="submit">Save config</button>
+              <button id="reset-config-btn" type="button" class="ghost">Reset Form</button>
             </div>
           </form>
-          <div class="actions">
-            <button id="reset-config-btn" type="button" class="ghost">Reset Form</button>
-          </div>
           <p id="config-status" class="small"></p>
         </section>
       </section>
