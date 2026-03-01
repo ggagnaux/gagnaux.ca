@@ -22,14 +22,23 @@ const projectsEditor = document.getElementById("projects-editor");
 const linksEditor = document.getElementById("links-editor");
 const addProjectBtn = document.getElementById("add-project-btn");
 const removeProjectsBtn = document.getElementById("remove-projects-btn");
+const toggleProjectsBtn = document.getElementById("toggle-projects-btn");
+const projectsCollectionBody = document.getElementById("projects-collection-body");
 const addLinkBtn = document.getElementById("add-link-btn");
 const removeLinksBtn = document.getElementById("remove-links-btn");
+const toggleLinksBtn = document.getElementById("toggle-links-btn");
+const linksCollectionBody = document.getElementById("links-collection-body");
 const resetConfigBtn = document.getElementById("reset-config-btn");
 const configStatus = document.getElementById("config-status");
 const tabBlogBtn = document.getElementById("tab-blog-btn");
 const tabConfigBtn = document.getElementById("tab-config-btn");
 const tabBlogPanel = document.getElementById("tab-blog-panel");
 const tabConfigPanel = document.getElementById("tab-config-panel");
+const confirmOverlay = document.getElementById("confirm-overlay");
+const confirmTitle = document.getElementById("confirm-title");
+const confirmMessage = document.getElementById("confirm-message");
+const confirmCancelBtn = document.getElementById("confirm-cancel-btn");
+const confirmOkBtn = document.getElementById("confirm-ok-btn");
 
 let lastLoadedConfig = null;
 let configSaveInFlight = false;
@@ -39,10 +48,13 @@ let draggedProjectRow = null;
 let draggedProjectStartIndex = -1;
 let draggedLinkRow = null;
 let draggedLinkStartIndex = -1;
+let confirmResolver = null;
 
 init().catch(showLogin);
 wireProjectsTableDragAndDrop();
 wireLinksTableDragAndDrop();
+setupConfirmDialog();
+setupConfigCollectionToggles();
 
 async function init() {
   const res = await fetch("/api/admin/session");
@@ -106,7 +118,11 @@ removeProjectsBtn.addEventListener("click", async () => {
   ).map((checkbox) => checkbox.closest("tr[data-project-row]"));
 
   if (!selectedRows.length) return;
-  const confirmed = window.confirm("Remove selected project row(s)?");
+  const confirmed = await openConfirmDialog({
+    title: "Remove Projects",
+    message: "Remove selected project row(s)?",
+    confirmLabel: "Remove"
+  });
   if (!confirmed) return;
 
   selectedRows.forEach((row) => row.remove());
@@ -129,7 +145,11 @@ removeLinksBtn.addEventListener("click", async () => {
   ).map((checkbox) => checkbox.closest("tr[data-link-row]"));
 
   if (!selectedRows.length) return;
-  const confirmed = window.confirm("Remove selected link row(s)?");
+  const confirmed = await openConfirmDialog({
+    title: "Remove Links",
+    message: "Remove selected link row(s)?",
+    confirmLabel: "Remove"
+  });
   if (!confirmed) return;
 
   selectedRows.forEach((row) => row.remove());
@@ -672,7 +692,12 @@ function editPost(slug, posts) {
 }
 
 async function deletePost(slug) {
-  if (!window.confirm(`Delete '${slug}'?`)) return;
+  const confirmed = await openConfirmDialog({
+    title: "Delete Post",
+    message: `Delete '${slug}'?`,
+    confirmLabel: "Delete"
+  });
+  if (!confirmed) return;
 
   const res = await fetch(`/api/admin/posts/${encodeURIComponent(slug)}`, {
     method: "DELETE"
@@ -733,6 +758,31 @@ function setAdminTab(tabName) {
   tabConfigBtn.setAttribute("aria-selected", String(!isBlog));
 }
 
+function setupConfigCollectionToggles() {
+  if (toggleProjectsBtn && projectsCollectionBody) {
+    toggleProjectsBtn.addEventListener("click", () => {
+      const isExpanded = toggleProjectsBtn.getAttribute("aria-expanded") === "true";
+      setCollapsibleState(toggleProjectsBtn, projectsCollectionBody, !isExpanded);
+    });
+  }
+
+  if (toggleLinksBtn && linksCollectionBody) {
+    toggleLinksBtn.addEventListener("click", () => {
+      const isExpanded = toggleLinksBtn.getAttribute("aria-expanded") === "true";
+      setCollapsibleState(toggleLinksBtn, linksCollectionBody, !isExpanded);
+    });
+  }
+}
+
+function setCollapsibleState(toggleButton, contentContainer, expanded) {
+  const sectionName = toggleButton.id.includes("projects") ? "Projects" : "Links";
+  toggleButton.setAttribute("aria-expanded", String(expanded));
+  toggleButton.textContent = expanded ? "\u25B4" : "\u25BE";
+  toggleButton.setAttribute("aria-label", `${expanded ? "Collapse" : "Expand"} ${sectionName}`);
+  toggleButton.setAttribute("title", `${expanded ? "Collapse" : "Expand"} ${sectionName}`);
+  contentContainer.classList.toggle("hidden", !expanded);
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -744,4 +794,51 @@ function escapeHtml(value) {
 
 function escapeAttribute(value) {
   return String(value).replaceAll('"', "&quot;");
+}
+
+function setupConfirmDialog() {
+  if (!confirmOverlay || !confirmTitle || !confirmMessage || !confirmCancelBtn || !confirmOkBtn) return;
+
+  confirmCancelBtn.addEventListener("click", () => closeConfirmDialog(false));
+  confirmOkBtn.addEventListener("click", () => closeConfirmDialog(true));
+
+  confirmOverlay.addEventListener("click", (event) => {
+    if (event.target === confirmOverlay) closeConfirmDialog(false);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !confirmOverlay.classList.contains("hidden")) {
+      closeConfirmDialog(false);
+    }
+  });
+}
+
+function openConfirmDialog({ title, message, confirmLabel }) {
+  if (!confirmOverlay || !confirmTitle || !confirmMessage || !confirmCancelBtn || !confirmOkBtn) {
+    return Promise.resolve(window.confirm(message || "Are you sure?"));
+  }
+
+  if (confirmResolver) {
+    confirmResolver(false);
+    confirmResolver = null;
+  }
+
+  confirmTitle.textContent = title || "Confirm Action";
+  confirmMessage.textContent = message || "";
+  confirmOkBtn.textContent = confirmLabel || "Confirm";
+  confirmOverlay.classList.remove("hidden");
+  confirmOkBtn.focus();
+
+  return new Promise((resolve) => {
+    confirmResolver = resolve;
+  });
+}
+
+function closeConfirmDialog(result) {
+  if (!confirmOverlay) return;
+  confirmOverlay.classList.add("hidden");
+
+  const resolver = confirmResolver;
+  confirmResolver = null;
+  if (resolver) resolver(Boolean(result));
 }

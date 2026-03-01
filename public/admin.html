@@ -100,47 +100,57 @@
             <div class="config-collection config-collection-projects">
               <div class="config-collection-head">
                 <h4>Projects</h4>
-                <button id="add-project-btn" type="button" class="ghost inline-button">Add Project</button>
+                <div class="config-collection-actions">
+                  <button id="add-project-btn" type="button" class="ghost inline-button">Add Project</button>
+                  <button id="toggle-projects-btn" type="button" class="ghost inline-button collection-toggle-btn" aria-expanded="true" aria-controls="projects-collection-body" aria-label="Collapse Projects" title="Collapse Projects">&#9652;</button>
+                </div>
               </div>
-              <div class="projects-table-wrap">
-                <table class="projects-table">
-                  <thead>
-                    <tr>
-                      <th class="reorder-col"></th>
-                      <th class="checkbox-col"></th>
-                      <th>Name</th>
-                      <th>Description</th>
-                      <th>URL</th>
-                    </tr>
-                  </thead>
-                  <tbody id="projects-editor"></tbody>
-                </table>
-              </div>
-              <div class="config-remove-actions">
-                <button id="remove-projects-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+              <div id="projects-collection-body">
+                <div class="projects-table-wrap">
+                  <table class="projects-table">
+                    <thead>
+                      <tr>
+                        <th class="reorder-col"></th>
+                        <th class="checkbox-col"></th>
+                        <th>Name</th>
+                        <th>Description</th>
+                        <th>URL</th>
+                      </tr>
+                    </thead>
+                    <tbody id="projects-editor"></tbody>
+                  </table>
+                </div>
+                <div class="config-remove-actions">
+                  <button id="remove-projects-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+                </div>
               </div>
             </div>
 
             <div class="config-collection config-collection-links">
               <div class="config-collection-head">
                 <h4>Links</h4>
-                <button id="add-link-btn" type="button" class="ghost inline-button">Add Link</button>
+                <div class="config-collection-actions">
+                  <button id="add-link-btn" type="button" class="ghost inline-button">Add Link</button>
+                  <button id="toggle-links-btn" type="button" class="ghost inline-button collection-toggle-btn" aria-expanded="true" aria-controls="links-collection-body" aria-label="Collapse Links" title="Collapse Links">&#9652;</button>
+                </div>
               </div>
-              <div class="links-table-wrap">
-                <table class="links-table">
-                  <thead>
-                    <tr>
-                      <th class="reorder-col"></th>
-                      <th class="checkbox-col"></th>
-                      <th>Label</th>
-                      <th>URL</th>
-                    </tr>
-                  </thead>
-                  <tbody id="links-editor"></tbody>
-                </table>
-              </div>
-              <div class="config-remove-actions">
-                <button id="remove-links-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+              <div id="links-collection-body">
+                <div class="links-table-wrap">
+                  <table class="links-table">
+                    <thead>
+                      <tr>
+                        <th class="reorder-col"></th>
+                        <th class="checkbox-col"></th>
+                        <th>Label</th>
+                        <th>URL</th>
+                      </tr>
+                    </thead>
+                    <tbody id="links-editor"></tbody>
+                  </table>
+                </div>
+                <div class="config-remove-actions">
+                  <button id="remove-links-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+                </div>
               </div>
             </div>
 
@@ -159,6 +169,17 @@
   <footer class="site-footer">
     <div class="site-footer-inner">Copyright © 2026 Greg Gagnaux. All rights reserved.</div>
   </footer>
+
+  <div id="confirm-overlay" class="confirm-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="confirm-title" aria-describedby="confirm-message">
+    <div class="confirm-dialog">
+      <h3 id="confirm-title">Confirm Action</h3>
+      <p id="confirm-message"></p>
+      <div class="confirm-actions">
+        <button id="confirm-cancel-btn" type="button" class="ghost inline-button">Cancel</button>
+        <button id="confirm-ok-btn" type="button" class="danger-button inline-button">Confirm</button>
+      </div>
+    </div>
+  </div>
 
   <script type="module" src="/js/admin.js"></script>
 </body>
