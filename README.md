@@ -1,4 +1,4 @@
-# Minimal Blog (HTML/CSS/JS + Markdown)
+# Minimal Personal Site/Blog (HTML/CSS/JS + Markdown)
 
 This project uses:
 
@@ -17,6 +17,10 @@ This project uses:
 - Image upload from admin and markdown insertion
 - Editable homepage config from the admin panel
 - Configurable navbar brand image via `brandImage` in site config
+
+## Screenshot
+
+![Project screenshot](public/img/Screenshot1.jpg)
 
 ## Run locally
 
