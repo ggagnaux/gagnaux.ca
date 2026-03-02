@@ -4,6 +4,30 @@
   "brandImageAlt": "Greg Gagnaux",
   "tagline": "Work highlights, writing, and links.",
   "about": "Thanks for stopping by!  This is my minimal personal site for sharing projects, notes, and links. I also have a site dedicated to my visual art at [www.toji.studio](http://www.toji.ca)",
+  "themeColors": {
+    "light": {
+      "bg": "#f6f6f1",
+      "surface": "#ffffff",
+      "text": "#1f1f1c",
+      "muted": "#626258",
+      "border": "#d7d7cd",
+      "accent": "#245f4a",
+      "danger": "#a53030",
+      "fieldBg": "#ffffff",
+      "bgTop": "#ecefe5"
+    },
+    "dark": {
+      "bg": "#767676",
+      "surface": "#1d211f",
+      "text": "#e7ece7",
+      "muted": "#a8b2ab",
+      "border": "#646464",
+      "accent": "#2494b3",
+      "danger": "#ff8f8f",
+      "fieldBg": "#101311",
+      "bgTop": "#1c241f"
+    }
+  },
   "projects": [
     {
       "name": "Toji Studios Portfolio",
@@ -49,12 +73,12 @@
       "url": "https://github.com/ggagnaux"
     },
     {
-      "label": "LinkedIn",
-      "url": "https://www.linkedin.com/in/ggagnaux"
-    },
-    {
       "label": "Medium",
       "url": "https://medium.com/@ggagnaux"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/ggagnaux"
     }
   ]
 }

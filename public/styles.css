@@ -13,11 +13,11 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #2494b3;
+  --bg: #767676;
   --surface: #1d211f;
   --text: #e7ece7;
   --muted: #a8b2ab;
-  --border: #35413a;
+  --border: #646464;
   --accent: #2494b3;
   --danger: #ff8f8f;
   --field-bg: #101311;
@@ -238,7 +238,7 @@ body.nav-compact .theme-control label {
 
 .card {
   background: var(--surface);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 10px;
   padding: 1rem;
   margin-bottom: 1rem;
@@ -271,6 +271,44 @@ body.nav-compact .theme-control label {
 .config-collection-projects {
   background: color-mix(in srgb, var(--surface) 84%, #c7ddff 16%);
   border-color: color-mix(in srgb, var(--border) 65%, #4d79b8 35%);
+}
+
+.config-collection-details {
+  background: color-mix(in srgb, var(--surface) 84%, #bfe5d2 16%);
+  border-color: color-mix(in srgb, var(--border) 65%, #4f9d77 35%);
+}
+
+.config-collection-colors {
+  background: color-mix(in srgb, var(--surface) 84%, #f6d8bf 16%);
+  border-color: color-mix(in srgb, var(--border) 65%, #b87a4d 35%);
+}
+
+.site-config-details > summary + .stack {
+  margin-top: 0.55rem;
+}
+
+.colors-config-stack {
+  gap: 0.85rem;
+}
+
+.config-subheading {
+  margin: 0.2rem 0 0;
+}
+
+.color-grid {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+}
+
+.color-grid label {
+  margin: 0;
+}
+
+.color-grid input[type="color"] {
+  width: 100%;
+  min-height: 2.2rem;
+  padding: 0.2rem;
 }
 
 .projects-table-wrap {
@@ -441,6 +479,52 @@ body.nav-compact .theme-control label {
 .config-row.is-dragging {
   opacity: 0.65;
   border-style: dashed;
+}
+
+.toast-container {
+  position: fixed;
+  right: 1rem;
+  bottom: 4.5rem;
+  z-index: 2400;
+  display: grid;
+  gap: 0.5rem;
+  width: min(22rem, calc(100vw - 2rem));
+}
+
+.toast {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 160ms ease, transform 160ms ease;
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+  padding: 0.55rem 0.7rem;
+  font-size: 0.92rem;
+  line-height: 1.35;
+}
+
+.toast.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-success {
+  border-left-color: #2a9b54;
+}
+
+.toast-warning {
+  border-left-color: #b17a17;
+}
+
+.toast-error {
+  border-left-color: #d93434;
+}
+
+.toast-info {
+  border-left-color: var(--accent);
 }
 
 .confirm-overlay {

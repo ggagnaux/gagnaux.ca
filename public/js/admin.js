@@ -1,11 +1,9 @@
 const loginSection = document.getElementById("login-section");
 const loginForm = document.getElementById("login-form");
-const loginError = document.getElementById("login-error");
 
 const dashboard = document.getElementById("dashboard");
 const postForm = document.getElementById("post-form");
 const postsList = document.getElementById("posts-list");
-const formStatus = document.getElementById("form-status");
 const formTitle = document.getElementById("form-title");
 
 const uploadBtn = document.getElementById("upload-btn");
@@ -18,18 +16,32 @@ const cfgBrandImage = document.getElementById("cfg-brand-image");
 const cfgBrandImageAlt = document.getElementById("cfg-brand-image-alt");
 const cfgAbout = document.getElementById("cfg-about");
 const cfgHighlights = document.getElementById("cfg-highlights");
+const cfgLightBg = document.getElementById("cfg-light-bg");
+const cfgLightSurface = document.getElementById("cfg-light-surface");
+const cfgLightText = document.getElementById("cfg-light-text");
+const cfgLightMuted = document.getElementById("cfg-light-muted");
+const cfgLightBorder = document.getElementById("cfg-light-border");
+const cfgLightAccent = document.getElementById("cfg-light-accent");
+const cfgLightDanger = document.getElementById("cfg-light-danger");
+const cfgLightFieldBg = document.getElementById("cfg-light-field-bg");
+const cfgLightBgTop = document.getElementById("cfg-light-bg-top");
+const cfgDarkBg = document.getElementById("cfg-dark-bg");
+const cfgDarkSurface = document.getElementById("cfg-dark-surface");
+const cfgDarkText = document.getElementById("cfg-dark-text");
+const cfgDarkMuted = document.getElementById("cfg-dark-muted");
+const cfgDarkBorder = document.getElementById("cfg-dark-border");
+const cfgDarkAccent = document.getElementById("cfg-dark-accent");
+const cfgDarkDanger = document.getElementById("cfg-dark-danger");
+const cfgDarkFieldBg = document.getElementById("cfg-dark-field-bg");
+const cfgDarkBgTop = document.getElementById("cfg-dark-bg-top");
+const resetColorsBtn = document.getElementById("reset-colors-btn");
 const projectsEditor = document.getElementById("projects-editor");
 const linksEditor = document.getElementById("links-editor");
 const addProjectBtn = document.getElementById("add-project-btn");
 const removeProjectsBtn = document.getElementById("remove-projects-btn");
-const toggleProjectsBtn = document.getElementById("toggle-projects-btn");
-const projectsCollectionBody = document.getElementById("projects-collection-body");
 const addLinkBtn = document.getElementById("add-link-btn");
 const removeLinksBtn = document.getElementById("remove-links-btn");
-const toggleLinksBtn = document.getElementById("toggle-links-btn");
-const linksCollectionBody = document.getElementById("links-collection-body");
 const resetConfigBtn = document.getElementById("reset-config-btn");
-const configStatus = document.getElementById("config-status");
 const tabBlogBtn = document.getElementById("tab-blog-btn");
 const tabConfigBtn = document.getElementById("tab-config-btn");
 const tabBlogPanel = document.getElementById("tab-blog-panel");
@@ -39,22 +51,47 @@ const confirmTitle = document.getElementById("confirm-title");
 const confirmMessage = document.getElementById("confirm-message");
 const confirmCancelBtn = document.getElementById("confirm-cancel-btn");
 const confirmOkBtn = document.getElementById("confirm-ok-btn");
+const toastContainer = document.getElementById("toast-container");
 
 let lastLoadedConfig = null;
 let configSaveInFlight = false;
 let configSaveQueued = false;
+let warnedMissingThemeColors = false;
 
 let draggedProjectRow = null;
 let draggedProjectStartIndex = -1;
 let draggedLinkRow = null;
 let draggedLinkStartIndex = -1;
 let confirmResolver = null;
+const THEME_COLOR_DEFAULTS = Object.freeze({
+  light: Object.freeze({
+    bg: "#f6f6f1",
+    surface: "#ffffff",
+    text: "#1f1f1c",
+    muted: "#626258",
+    border: "#d7d7cd",
+    accent: "#245f4a",
+    danger: "#a53030",
+    fieldBg: "#ffffff",
+    bgTop: "#ecefe5"
+  }),
+  dark: Object.freeze({
+    bg: "#767676",
+    surface: "#1d211f",
+    text: "#e7ece7",
+    muted: "#a8b2ab",
+    border: "#646464",
+    accent: "#2494b3",
+    danger: "#ff8f8f",
+    fieldBg: "#101311",
+    bgTop: "#1c241f"
+  })
+});
 
 init().catch(showLogin);
 wireProjectsTableDragAndDrop();
 wireLinksTableDragAndDrop();
 setupConfirmDialog();
-setupConfigCollectionToggles();
 
 async function init() {
   const res = await fetch("/api/admin/session");
@@ -69,7 +106,6 @@ async function init() {
 
 loginForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  loginError.textContent = "";
 
   const formData = new FormData(loginForm);
   const payload = {
@@ -84,7 +120,7 @@ loginForm.addEventListener("submit", async (event) => {
   });
 
   if (!res.ok) {
-    loginError.textContent = "Invalid username or password.";
+    showToast("Invalid username or password.", { type: "error" });
     return;
   }
 
@@ -103,7 +139,7 @@ tabConfigBtn.addEventListener("click", () => setAdminTab("config"));
 
 configForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  configStatus.textContent = "Saving config...";
+  showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
   await persistConfig("Config saved.");
 });
 
@@ -130,7 +166,7 @@ removeProjectsBtn.addEventListener("click", async () => {
     renderProjectsTable([]);
   }
   syncRemoveProjectsButtonState();
-  configStatus.textContent = "Saving config...";
+  showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
   await persistConfig("Auto-saved.");
 });
 
@@ -157,15 +193,32 @@ removeLinksBtn.addEventListener("click", async () => {
     renderLinksTable([]);
   }
   syncRemoveLinksButtonState();
-  configStatus.textContent = "Saving config...";
+  showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
   await persistConfig("Auto-saved.");
 });
 
 resetConfigBtn.addEventListener("click", () => {
   if (lastLoadedConfig) {
     populateConfigForm(lastLoadedConfig);
-    configStatus.textContent = "Form reset.";
+    showToast("Form reset.", { type: "info" });
   }
+});
+
+if (resetColorsBtn) {
+  resetColorsBtn.addEventListener("click", async () => {
+    applyThemeColorsToInputs(THEME_COLOR_DEFAULTS);
+    showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
+    await persistConfig("Colors reset to defaults.");
+  });
+}
+
+configForm.addEventListener("change", async (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLInputElement)) return;
+  if (target.type !== "color") return;
+
+  showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
+  await persistConfig("Auto-saved.");
 });
 
 projectsEditor.addEventListener("change", (event) => {
@@ -200,7 +253,7 @@ projectsEditor.addEventListener("focusout", async (event) => {
   if (trimmed === lastValue) return;
 
   target.dataset.lastValue = trimmed;
-  configStatus.textContent = "Saving config...";
+  showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
   await persistConfig("Auto-saved.");
 });
 
@@ -223,18 +276,18 @@ linksEditor.addEventListener("focusout", async (event) => {
 
   // Avoid auto-saving half-complete rows; otherwise they are filtered out and disappear.
   if (!labelValue || !urlValue) {
-    configStatus.textContent = "Link row is incomplete. Fill Label and URL to auto-save.";
+    showToast("Link row is incomplete. Fill Label and URL to auto-save.", { type: "warning" });
     return;
   }
 
-  configStatus.textContent = "Saving config...";
+  showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
   await persistConfig("Auto-saved.");
 });
 
 uploadBtn.addEventListener("click", async () => {
   const file = imageInput.files && imageInput.files[0];
   if (!file) {
-    formStatus.textContent = "Choose an image first.";
+    showToast("Choose an image first.", { type: "warning" });
     return;
   }
 
@@ -248,7 +301,7 @@ uploadBtn.addEventListener("click", async () => {
   const data = await res.json();
 
   if (!res.ok) {
-    formStatus.textContent = data.error || "Upload failed.";
+    showToast(data.error || "Upload failed.", { type: "error" });
     return;
   }
 
@@ -256,14 +309,14 @@ uploadBtn.addEventListener("click", async () => {
   postForm.content.value = `${current}${current.endsWith("\n") ? "" : "\n"}${data.markdown}\n`;
   postForm.coverImage.value = postForm.coverImage.value || data.url;
   imageInput.value = "";
-  formStatus.textContent = `Uploaded ${data.url}`;
+  showToast(`Uploaded ${data.url}`, { type: "success" });
 });
 
 resetBtn.addEventListener("click", resetForm);
 
 postForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  formStatus.textContent = "Saving...";
+  showToast("Saving post...", { type: "info", duration: 900, key: "post-saving" });
 
   const payload = serializeForm();
   const originalSlug = postForm.originalSlug.value;
@@ -280,11 +333,11 @@ postForm.addEventListener("submit", async (event) => {
   const data = await res.json();
 
   if (!res.ok) {
-    formStatus.textContent = data.error || "Save failed.";
+    showToast(data.error || "Save failed.", { type: "error" });
     return;
   }
 
-  formStatus.textContent = "Saved.";
+  showToast("Post saved.", { type: "success" });
   resetForm();
   await refreshPosts();
 });
@@ -313,7 +366,7 @@ async function refreshPosts() {
           </div>
           <div class="actions">
             <button type="button" data-action="edit" data-slug="${escapeAttribute(post.slug)}">Edit</button>
-            <button type="button" class="ghost" data-action="delete" data-slug="${escapeAttribute(post.slug)}">Delete</button>
+            <button type="button" class="danger-button" data-action="delete" data-slug="${escapeAttribute(post.slug)}">Delete</button>
           </div>
         </div>
       </div>
@@ -333,14 +386,13 @@ async function refreshPosts() {
 async function loadConfig() {
   const res = await fetch("/api/admin/config");
   if (!res.ok) {
-    configStatus.textContent = "Could not load config.";
+    showToast("Could not load config.", { type: "error" });
     return;
   }
 
   const config = await res.json();
   lastLoadedConfig = config;
   populateConfigForm(config);
-  configStatus.textContent = "";
 }
 
 function populateConfigForm(config) {
@@ -349,6 +401,8 @@ function populateConfigForm(config) {
   cfgBrandImageAlt.value = config.brandImageAlt || "";
   cfgAbout.value = config.about || "";
   cfgHighlights.value = Array.isArray(config.highlights) ? config.highlights.join("\n") : "";
+
+  applyThemeColorsToInputs(config.themeColors || THEME_COLOR_DEFAULTS);
 
   renderProjectsTable(Array.isArray(config.projects) ? config.projects : []);
   renderLinksTable(Array.isArray(config.links) ? config.links : []);
@@ -490,7 +544,7 @@ function wireProjectsTableDragAndDrop() {
     draggedProjectRow = null;
 
     if (draggedProjectStartIndex !== -1 && endIndex !== -1 && draggedProjectStartIndex !== endIndex) {
-      configStatus.textContent = "Saving config...";
+      showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
       await persistConfig("Auto-saved.");
     }
     draggedProjectStartIndex = -1;
@@ -547,7 +601,7 @@ function wireLinksTableDragAndDrop() {
     draggedLinkRow = null;
 
     if (draggedLinkStartIndex !== -1 && endIndex !== -1 && draggedLinkStartIndex !== endIndex) {
-      configStatus.textContent = "Saving config...";
+      showToast("Saving config...", { type: "info", duration: 900, key: "config-saving" });
       await persistConfig("Auto-saved.");
     }
     draggedLinkStartIndex = -1;
@@ -634,8 +688,61 @@ function serializeConfigForm() {
     tagline: String(lastLoadedConfig?.tagline || ""),
     about: cfgAbout.value.trim(),
     highlights,
+    themeColors: getThemeColorsFromInputs(),
     projects,
     links
+  };
+}
+
+function applyThemeColorsToInputs(themeColors) {
+  const light = { ...THEME_COLOR_DEFAULTS.light, ...(themeColors?.light || {}) };
+  const dark = { ...THEME_COLOR_DEFAULTS.dark, ...(themeColors?.dark || {}) };
+
+  cfgLightBg.value = light.bg;
+  cfgLightSurface.value = light.surface;
+  cfgLightText.value = light.text;
+  cfgLightMuted.value = light.muted;
+  cfgLightBorder.value = light.border;
+  cfgLightAccent.value = light.accent;
+  cfgLightDanger.value = light.danger;
+  cfgLightFieldBg.value = light.fieldBg;
+  cfgLightBgTop.value = light.bgTop;
+
+  cfgDarkBg.value = dark.bg;
+  cfgDarkSurface.value = dark.surface;
+  cfgDarkText.value = dark.text;
+  cfgDarkMuted.value = dark.muted;
+  cfgDarkBorder.value = dark.border;
+  cfgDarkAccent.value = dark.accent;
+  cfgDarkDanger.value = dark.danger;
+  cfgDarkFieldBg.value = dark.fieldBg;
+  cfgDarkBgTop.value = dark.bgTop;
+}
+
+function getThemeColorsFromInputs() {
+  return {
+    light: {
+      bg: cfgLightBg.value,
+      surface: cfgLightSurface.value,
+      text: cfgLightText.value,
+      muted: cfgLightMuted.value,
+      border: cfgLightBorder.value,
+      accent: cfgLightAccent.value,
+      danger: cfgLightDanger.value,
+      fieldBg: cfgLightFieldBg.value,
+      bgTop: cfgLightBgTop.value
+    },
+    dark: {
+      bg: cfgDarkBg.value,
+      surface: cfgDarkSurface.value,
+      text: cfgDarkText.value,
+      muted: cfgDarkMuted.value,
+      border: cfgDarkBorder.value,
+      accent: cfgDarkAccent.value,
+      danger: cfgDarkDanger.value,
+      fieldBg: cfgDarkFieldBg.value,
+      bgTop: cfgDarkBgTop.value
+    }
   };
 }
 
@@ -656,13 +763,31 @@ async function persistConfig(successMessage) {
     const data = await res.json();
 
     if (!res.ok) {
-      configStatus.textContent = data.error || "Could not save config.";
+      showToast(data.error || "Could not save config.", { type: "error" });
       return;
     }
 
-    lastLoadedConfig = data.config;
-    populateConfigForm(data.config);
-    configStatus.textContent = successMessage;
+    const serverConfig = data && typeof data.config === "object" && data.config ? data.config : {};
+    const mergedConfig = {
+      ...serverConfig,
+      themeColors:
+        serverConfig.themeColors && typeof serverConfig.themeColors === "object"
+          ? serverConfig.themeColors
+          : parsed.themeColors
+    };
+
+    if (!serverConfig.themeColors && !warnedMissingThemeColors) {
+      warnedMissingThemeColors = true;
+      showToast("Theme colors were not returned by the server response. Using local values.", { type: "warning", duration: 3200 });
+    }
+
+    lastLoadedConfig = mergedConfig;
+    populateConfigForm(mergedConfig);
+    showToast(successMessage, {
+      type: "success",
+      duration: successMessage === "Auto-saved." ? 1200 : 2200,
+      key: successMessage === "Auto-saved." ? "config-autosave" : null
+    });
   } finally {
     configSaveInFlight = false;
     if (configSaveQueued) {
@@ -687,7 +812,6 @@ function editPost(slug, posts) {
   postForm.content.value = post.content || "";
 
   formTitle.textContent = `Edit: ${post.title}`;
-  formStatus.textContent = "";
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
@@ -705,7 +829,7 @@ async function deletePost(slug) {
   const data = await res.json();
 
   if (!res.ok) {
-    formStatus.textContent = data.error || "Delete failed.";
+    showToast(data.error || "Delete failed.", { type: "error" });
     return;
   }
 
@@ -733,7 +857,6 @@ function resetForm() {
   postForm.originalSlug.value = "";
   postForm.date.value = new Date().toISOString().slice(0, 10);
   formTitle.textContent = "New Post";
-  formStatus.textContent = "";
 }
 
 function showLogin() {
@@ -758,29 +881,42 @@ function setAdminTab(tabName) {
   tabConfigBtn.setAttribute("aria-selected", String(!isBlog));
 }
 
-function setupConfigCollectionToggles() {
-  if (toggleProjectsBtn && projectsCollectionBody) {
-    toggleProjectsBtn.addEventListener("click", () => {
-      const isExpanded = toggleProjectsBtn.getAttribute("aria-expanded") === "true";
-      setCollapsibleState(toggleProjectsBtn, projectsCollectionBody, !isExpanded);
-    });
+function showToast(message, { type = "info", duration = 2200, key = null } = {}) {
+  if (!toastContainer || !message) return;
+
+  const resolvedKey = key || "";
+  let toast = null;
+  if (resolvedKey) {
+    toast = toastContainer.querySelector(`[data-toast-key="${resolvedKey}"]`);
   }
 
-  if (toggleLinksBtn && linksCollectionBody) {
-    toggleLinksBtn.addEventListener("click", () => {
-      const isExpanded = toggleLinksBtn.getAttribute("aria-expanded") === "true";
-      setCollapsibleState(toggleLinksBtn, linksCollectionBody, !isExpanded);
-    });
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.className = "toast";
+    if (resolvedKey) toast.dataset.toastKey = resolvedKey;
+    toastContainer.appendChild(toast);
   }
-}
 
-function setCollapsibleState(toggleButton, contentContainer, expanded) {
-  const sectionName = toggleButton.id.includes("projects") ? "Projects" : "Links";
-  toggleButton.setAttribute("aria-expanded", String(expanded));
-  toggleButton.textContent = expanded ? "\u25B4" : "\u25BE";
-  toggleButton.setAttribute("aria-label", `${expanded ? "Collapse" : "Expand"} ${sectionName}`);
-  toggleButton.setAttribute("title", `${expanded ? "Collapse" : "Expand"} ${sectionName}`);
-  contentContainer.classList.toggle("hidden", !expanded);
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  toast.setAttribute("role", type === "error" ? "alert" : "status");
+  toast.setAttribute("aria-live", type === "error" ? "assertive" : "polite");
+
+  if (toast.dataset.timerId) {
+    window.clearTimeout(Number(toast.dataset.timerId));
+  }
+
+  requestAnimationFrame(() => {
+    toast.classList.add("is-visible");
+  });
+
+  const hideTimeout = window.setTimeout(() => {
+    toast.classList.remove("is-visible");
+    window.setTimeout(() => {
+      if (toast.parentNode) toast.remove();
+    }, 180);
+  }, duration);
+  toast.dataset.timerId = String(hideTimeout);
 }
 
 function escapeHtml(value) {

@@ -42,7 +42,31 @@ const DEFAULT_CONFIG = {
     { label: "GitHub", url: "https://github.com/" },
     { label: "LinkedIn", url: "https://www.linkedin.com/" },
     { label: "Your other website", url: "https://example.com/" }
-  ]
+  ],
+  themeColors: {
+    light: {
+      bg: "#f6f6f1",
+      surface: "#ffffff",
+      text: "#1f1f1c",
+      muted: "#626258",
+      border: "#d7d7cd",
+      accent: "#245f4a",
+      danger: "#a53030",
+      fieldBg: "#ffffff",
+      bgTop: "#ecefe5"
+    },
+    dark: {
+      bg: "#767676",
+      surface: "#1d211f",
+      text: "#e7ece7",
+      muted: "#a8b2ab",
+      border: "#646464",
+      accent: "#2494b3",
+      danger: "#ff8f8f",
+      fieldBg: "#101311",
+      bgTop: "#1c241f"
+    }
+  }
 };
 
 marked.setOptions({ breaks: true, gfm: true });
@@ -122,6 +146,37 @@ function normalizeConfig(input) {
         }))
         .filter((item) => item.label && item.url)
     : DEFAULT_CONFIG.links;
+  const normalizeHex = (value, fallback) => {
+    const candidate = String(value || "").trim();
+    if (/^#[0-9a-fA-F]{6}$/.test(candidate)) return candidate.toLowerCase();
+    return fallback;
+  };
+  const lightSource = cfg.themeColors && typeof cfg.themeColors === "object" ? cfg.themeColors.light : null;
+  const darkSource = cfg.themeColors && typeof cfg.themeColors === "object" ? cfg.themeColors.dark : null;
+  const themeColors = {
+    light: {
+      bg: normalizeHex(lightSource?.bg, DEFAULT_CONFIG.themeColors.light.bg),
+      surface: normalizeHex(lightSource?.surface, DEFAULT_CONFIG.themeColors.light.surface),
+      text: normalizeHex(lightSource?.text, DEFAULT_CONFIG.themeColors.light.text),
+      muted: normalizeHex(lightSource?.muted, DEFAULT_CONFIG.themeColors.light.muted),
+      border: normalizeHex(lightSource?.border, DEFAULT_CONFIG.themeColors.light.border),
+      accent: normalizeHex(lightSource?.accent, DEFAULT_CONFIG.themeColors.light.accent),
+      danger: normalizeHex(lightSource?.danger, DEFAULT_CONFIG.themeColors.light.danger),
+      fieldBg: normalizeHex(lightSource?.fieldBg, DEFAULT_CONFIG.themeColors.light.fieldBg),
+      bgTop: normalizeHex(lightSource?.bgTop, DEFAULT_CONFIG.themeColors.light.bgTop)
+    },
+    dark: {
+      bg: normalizeHex(darkSource?.bg, DEFAULT_CONFIG.themeColors.dark.bg),
+      surface: normalizeHex(darkSource?.surface, DEFAULT_CONFIG.themeColors.dark.surface),
+      text: normalizeHex(darkSource?.text, DEFAULT_CONFIG.themeColors.dark.text),
+      muted: normalizeHex(darkSource?.muted, DEFAULT_CONFIG.themeColors.dark.muted),
+      border: normalizeHex(darkSource?.border, DEFAULT_CONFIG.themeColors.dark.border),
+      accent: normalizeHex(darkSource?.accent, DEFAULT_CONFIG.themeColors.dark.accent),
+      danger: normalizeHex(darkSource?.danger, DEFAULT_CONFIG.themeColors.dark.danger),
+      fieldBg: normalizeHex(darkSource?.fieldBg, DEFAULT_CONFIG.themeColors.dark.fieldBg),
+      bgTop: normalizeHex(darkSource?.bgTop, DEFAULT_CONFIG.themeColors.dark.bgTop)
+    }
+  };
 
   return {
     siteTitle: String(cfg.siteTitle || DEFAULT_CONFIG.siteTitle).trim(),
@@ -129,6 +184,7 @@ function normalizeConfig(input) {
     brandImageAlt: String(cfg.brandImageAlt || cfg.siteTitle || DEFAULT_CONFIG.brandImageAlt).trim(),
     tagline: String(cfg.tagline || DEFAULT_CONFIG.tagline).trim(),
     about: String(cfg.about || DEFAULT_CONFIG.about).trim(),
+    themeColors,
     projects,
     highlights,
     links

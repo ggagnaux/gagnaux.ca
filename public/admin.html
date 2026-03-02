@@ -44,12 +44,11 @@
         <label>Password<input type="password" name="password" required /></label>
         <button type="submit">Sign in</button>
       </form>
-      <p id="login-error" class="error"></p>
     </section>
 
     <section id="dashboard" class="hidden">
       <nav class="admin-tabs" aria-label="Admin sections">
-        <button id="tab-blog-btn" class="admin-tab-btn" type="button" aria-selected="true">Blog</button>
+        <button id="tab-blog-btn" class="admin-tab-btn" type="button" aria-selected="true">Manage Blog</button>
         <button id="tab-config-btn" class="admin-tab-btn" type="button" aria-selected="false">Site Config</button>
       </nav>
 
@@ -78,7 +77,6 @@
               <button type="submit">Save post</button>
               <button id="reset-btn" type="button" class="ghost">Reset</button>
             </div>
-            <p id="form-status" class="small"></p>
           </form>
         </section>
 
@@ -88,80 +86,111 @@
         </section>
       </section>
 
-      <section id="tab-config-panel" class="hidden">
-        <section class="card admin-card-config">
-          <h3>Site Config</h3>
+        <section id="tab-config-panel" class="hidden">
+          <section class="card admin-card-config">
+            <!-- <h3>Site Config</h3> -->
+            <form id="site-config-form" class="stack">
+              <details id="site-config-details" class="config-collection config-collection-details site-config-details" open>
+                <summary>Content Details</summary>
+                <div class="stack">
+                  <label>Site Title<input id="cfg-site-title" name="siteTitle" required /></label>
+                  <label>Brand Image URL<input id="cfg-brand-image" name="brandImage" placeholder="/img/greg.jpg" /></label>
+                  <label>Brand Image Alt<input id="cfg-brand-image-alt" name="brandImageAlt" /></label>
+                  <label>About<textarea id="cfg-about" name="about" rows="4"></textarea></label>
+                  <label>Highlights (one per line)<textarea id="cfg-highlights" name="highlights" rows="5"></textarea></label>
+                </div>
+              </details>
 
-          <form id="site-config-form" class="stack">
-            <label>Site Title<input id="cfg-site-title" name="siteTitle" required /></label>
-            <label>Brand Image URL<input id="cfg-brand-image" name="brandImage" placeholder="/img/greg.jpg" /></label>
-            <label>Brand Image Alt<input id="cfg-brand-image-alt" name="brandImageAlt" /></label>
-            <label>About<textarea id="cfg-about" name="about" rows="4"></textarea></label>
-            <label>Highlights (one per line)<textarea id="cfg-highlights" name="highlights" rows="5"></textarea></label>
 
-            <div class="config-collection config-collection-projects">
+            <details class="config-collection config-collection-projects site-config-details">
+              <summary>Projects</summary>
               <div class="config-collection-head">
-                <h4>Projects</h4>
                 <div class="config-collection-actions">
                   <button id="add-project-btn" type="button" class="ghost inline-button">Add Project</button>
-                  <button id="toggle-projects-btn" type="button" class="ghost inline-button collection-toggle-btn" aria-expanded="true" aria-controls="projects-collection-body" aria-label="Collapse Projects" title="Collapse Projects">&#9652;</button>
                 </div>
               </div>
-              <div id="projects-collection-body">
-                <div class="projects-table-wrap">
-                  <table class="projects-table">
-                    <thead>
-                      <tr>
-                        <th class="reorder-col"></th>
-                        <th class="checkbox-col"></th>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>URL</th>
-                      </tr>
-                    </thead>
-                    <tbody id="projects-editor"></tbody>
-                  </table>
-                </div>
-                <div class="config-remove-actions">
-                  <button id="remove-projects-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
-                </div>
+              <div class="projects-table-wrap">
+                <table class="projects-table">
+                  <thead>
+                    <tr>
+                      <th class="reorder-col"></th>
+                      <th class="checkbox-col"></th>
+                      <th>Name</th>
+                      <th>Description</th>
+                      <th>URL</th>
+                    </tr>
+                  </thead>
+                  <tbody id="projects-editor"></tbody>
+                </table>
               </div>
-            </div>
+              <div class="config-remove-actions">
+                <button id="remove-projects-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+              </div>
+            </details>
 
-            <div class="config-collection config-collection-links">
+            <details class="config-collection config-collection-links site-config-details">
+              <summary>Links</summary>
               <div class="config-collection-head">
-                <h4>Links</h4>
                 <div class="config-collection-actions">
                   <button id="add-link-btn" type="button" class="ghost inline-button">Add Link</button>
-                  <button id="toggle-links-btn" type="button" class="ghost inline-button collection-toggle-btn" aria-expanded="true" aria-controls="links-collection-body" aria-label="Collapse Links" title="Collapse Links">&#9652;</button>
                 </div>
               </div>
-              <div id="links-collection-body">
-                <div class="links-table-wrap">
-                  <table class="links-table">
-                    <thead>
-                      <tr>
-                        <th class="reorder-col"></th>
-                        <th class="checkbox-col"></th>
-                        <th>Label</th>
-                        <th>URL</th>
-                      </tr>
-                    </thead>
-                    <tbody id="links-editor"></tbody>
-                  </table>
-                </div>
-                <div class="config-remove-actions">
-                  <button id="remove-links-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
-                </div>
+              <div class="links-table-wrap">
+                <table class="links-table">
+                  <thead>
+                    <tr>
+                      <th class="reorder-col"></th>
+                      <th class="checkbox-col"></th>
+                      <th>Label</th>
+                      <th>URL</th>
+                    </tr>
+                  </thead>
+                  <tbody id="links-editor"></tbody>
+                </table>
               </div>
-            </div>
+              <div class="config-remove-actions">
+                <button id="remove-links-btn" type="button" class="ghost inline-button danger-button hidden" disabled>Remove</button>
+              </div>
+            </details>
+
+              <details class="config-collection config-collection-colors site-config-details">
+                <summary>Colors and Fonts</summary>
+                <div class="stack colors-config-stack">
+                  <h4 class="config-subheading">Light Theme</h4>
+                  <div class="color-grid">
+                    <label>Background<input id="cfg-light-bg" name="lightBg" type="color" value="#f6f6f1" /></label>
+                    <label>Surface<input id="cfg-light-surface" name="lightSurface" type="color" value="#ffffff" /></label>
+                    <label>Text<input id="cfg-light-text" name="lightText" type="color" value="#1f1f1c" /></label>
+                    <label>Muted<input id="cfg-light-muted" name="lightMuted" type="color" value="#626258" /></label>
+                    <label>Border<input id="cfg-light-border" name="lightBorder" type="color" value="#d7d7cd" /></label>
+                    <label>Accent<input id="cfg-light-accent" name="lightAccent" type="color" value="#245f4a" /></label>
+                    <label>Danger<input id="cfg-light-danger" name="lightDanger" type="color" value="#a53030" /></label>
+                    <label>Field Background<input id="cfg-light-field-bg" name="lightFieldBg" type="color" value="#ffffff" /></label>
+                    <label>Top Background<input id="cfg-light-bg-top" name="lightBgTop" type="color" value="#ecefe5" /></label>
+                  </div>
+                  <h4 class="config-subheading">Dark Theme</h4>
+                  <div class="color-grid">
+                    <label>Background<input id="cfg-dark-bg" name="darkBg" type="color" value="#767676" /></label>
+                    <label>Surface<input id="cfg-dark-surface" name="darkSurface" type="color" value="#1d211f" /></label>
+                    <label>Text<input id="cfg-dark-text" name="darkText" type="color" value="#e7ece7" /></label>
+                    <label>Muted<input id="cfg-dark-muted" name="darkMuted" type="color" value="#a8b2ab" /></label>
+                    <label>Border<input id="cfg-dark-border" name="darkBorder" type="color" value="#646464" /></label>
+                    <label>Accent<input id="cfg-dark-accent" name="darkAccent" type="color" value="#2494b3" /></label>
+                    <label>Danger<input id="cfg-dark-danger" name="darkDanger" type="color" value="#ff8f8f" /></label>
+                    <label>Field Background<input id="cfg-dark-field-bg" name="darkFieldBg" type="color" value="#101311" /></label>
+                    <label>Top Background<input id="cfg-dark-bg-top" name="darkBgTop" type="color" value="#1c241f" /></label>
+                  </div>
+                  <div class="config-remove-actions">
+                    <button id="reset-colors-btn" type="button" class="ghost inline-button">Reset Colors</button>
+                  </div>
+                </div>
+              </details>
 
             <div class="actions">
               <button id="save-config-btn" type="submit">Save config</button>
               <button id="reset-config-btn" type="button" class="ghost">Reset Form</button>
             </div>
           </form>
-          <p id="config-status" class="small"></p>
         </section>
       </section>
     </section>
@@ -180,6 +209,7 @@
       </div>
     </div>
   </div>
+  <div id="toast-container" class="toast-container" aria-live="polite" aria-atomic="false"></div>
 
   <script type="module" src="/js/admin.js"></script>
 </body>
