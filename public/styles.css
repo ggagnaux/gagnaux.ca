@@ -96,8 +96,9 @@ body {
   width: auto;
   max-width: 200px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 2px solid var(--accent);
+  border-radius: 0px;
+  /* border: 2px solid var(--accent); */
+  border: 1px solid #888888;
   transition: height 180ms ease, border-radius 180ms ease;
 }
 
@@ -211,7 +212,7 @@ body.nav-compact .top-nav-inner {
 
 body.nav-compact .brand-image {
   height: 41px;
-  border-radius: 6px;
+  border-radius: 0px;
 }
 
 body.nav-compact .brand-title {
