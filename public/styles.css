@@ -83,9 +83,16 @@ body {
   gap: 0.6rem;
 }
 
+.brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.48rem;
+  min-width: 0;
+}
+
 .brand-image {
   display: block;
-  height: 100px;
+  height: 70px;
   width: auto;
   max-width: 200px;
   object-fit: cover;
@@ -97,10 +104,17 @@ body {
 .brand-title {
   color: var(--text);
   font-weight: 500;
-  font-size: 2.1rem;
+  font-size: 1.1rem;
   line-height: 1.05;
-  white-space: pre-line;
+  white-space: nowrap;
   transition: font-size 180ms ease;
+}
+
+.brand-subtitle {
+  color: var(--muted);
+  font-size: 0.62rem;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
 nav { display: flex; gap: 1rem; flex-wrap: wrap; }
@@ -196,12 +210,16 @@ body.nav-compact .top-nav-inner {
 }
 
 body.nav-compact .brand-image {
-  height: 58px;
+  height: 41px;
   border-radius: 6px;
 }
 
 body.nav-compact .brand-title {
-  font-size: 1.35rem;
+  font-size: 1rem;
+}
+
+body.nav-compact .brand-subtitle {
+  font-size: 0.56rem;
 }
 
 body.nav-compact .top-menu button {

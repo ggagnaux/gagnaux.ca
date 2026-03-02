@@ -9,6 +9,7 @@ async function loadSiteConfig() {
   applyThemeColors(config.themeColors);
 
   const siteTitle = String(config.siteTitle || "gagnaux.ca");
+  const tagline = String(config.tagline || "Software Engineer | .NET Specialist | Creative Technologist");
   const brandImage = String(config.brandImage || "/img/greg.jpg");
   const brandImageAlt = String(config.brandImageAlt || siteTitle);
 
@@ -27,6 +28,11 @@ async function loadSiteConfig() {
   const title = document.getElementById("brand-title");
   if (title) {
     title.textContent = formatBrandTitle(siteTitle);
+  }
+
+  const subtitle = document.getElementById("brand-subtitle");
+  if (subtitle) {
+    subtitle.textContent = tagline;
   }
 }
 
@@ -67,8 +73,5 @@ function applyThemeColors(themeColors) {
 }
 
 function formatBrandTitle(siteTitle) {
-  const text = String(siteTitle || "").trim();
-  const firstSpace = text.indexOf(" ");
-  if (firstSpace === -1) return text;
-  return `${text.slice(0, firstSpace)}\n${text.slice(firstSpace + 1)}`;
+  return String(siteTitle || "").trim();
 }

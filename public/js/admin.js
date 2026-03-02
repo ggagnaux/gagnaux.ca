@@ -12,6 +12,7 @@ const resetBtn = document.getElementById("reset-btn");
 const logoutBtn = document.getElementById("logout-btn");
 const configForm = document.getElementById("site-config-form");
 const cfgSiteTitle = document.getElementById("cfg-site-title");
+const cfgTagline = document.getElementById("cfg-tagline");
 const cfgBrandImage = document.getElementById("cfg-brand-image");
 const cfgBrandImageAlt = document.getElementById("cfg-brand-image-alt");
 const cfgAbout = document.getElementById("cfg-about");
@@ -397,6 +398,7 @@ async function loadConfig() {
 
 function populateConfigForm(config) {
   cfgSiteTitle.value = config.siteTitle || "";
+  cfgTagline.value = config.tagline || "";
   cfgBrandImage.value = config.brandImage || "";
   cfgBrandImageAlt.value = config.brandImageAlt || "";
   cfgAbout.value = config.about || "";
@@ -685,7 +687,7 @@ function serializeConfigForm() {
     siteTitle: cfgSiteTitle.value.trim(),
     brandImage: cfgBrandImage.value.trim(),
     brandImageAlt: cfgBrandImageAlt.value.trim(),
-    tagline: String(lastLoadedConfig?.tagline || ""),
+    tagline: cfgTagline.value.trim(),
     about: cfgAbout.value.trim(),
     highlights,
     themeColors: getThemeColorsFromInputs(),
