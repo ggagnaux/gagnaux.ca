@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Music Scale Visualizer</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="header">
+      <div class="header-top">
+        <h1>Music Scale Visualizer</h1>
+        <label class="theme-control">
+          Theme
+          <select id="theme-select" aria-label="Theme selector">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="studio">Studio</option>
+          </select>
+        </label>
+      </div>
+      <p>Select a root and scale to view two octaves and hear notes by clicking keys.</p>
+    </header>
+
+    <section class="controls" aria-label="Scale controls">
+      <label>
+        Root note
+        <select id="root-select"></select>
+      </label>
+
+      <label>
+        Scale
+        <select id="scale-select"></select>
+      </label>
+
+      <div class="actions">
+        <span class="actions-label">Playback</span>
+        <button id="play-scale-btn" type="button">Play Octave</button>
+      </div>
+
+      <fieldset class="toggles">
+        <legend>Display options</legend>
+        <label><input type="checkbox" id="toggle-note-names" checked /> Note names</label>
+        <label><input type="checkbox" id="toggle-degrees" checked /> Scale degrees</label>
+        <label><input type="checkbox" id="toggle-intervals" checked /> Interval formula</label>
+      </fieldset>
+    </section>
+
+    <section class="scale-meta" aria-live="polite">
+      <p id="scale-notes"></p>
+      <p id="interval-formula"></p>
+    </section>
+
+    <section>
+      <div id="piano-roll" class="piano-roll" aria-label="Two octave piano roll"></div>
+      <p class="hint">Tip: click any key to play it.</p>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

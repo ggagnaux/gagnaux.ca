@@ -1,0 +1,40 @@
+{% extends "admin-layout.njk" %}
+
+{% block content %}
+  <section class="admin-header">
+    <p class="eyebrow">Admin / Security</p>
+    <h1>Security</h1>
+  </section>
+
+  <section class="admin-panel admin-panel--narrow">
+    <p>Update the admin username and password for the currently signed-in account.</p>
+
+    {% if errorMessage %}
+      <p class="error-text">{{ errorMessage }}</p>
+    {% endif %}
+
+    <form action="/admin/security" method="post" class="admin-form">
+      <label>
+        Username
+        <input type="text" name="username" value="{{ formValues.username }}" autocomplete="username" required>
+      </label>
+
+      <label>
+        Current Password
+        <input type="password" name="current_password" autocomplete="current-password" required>
+      </label>
+
+      <label>
+        New Password
+        <input type="password" name="new_password" autocomplete="new-password">
+      </label>
+
+      <label>
+        Confirm New Password
+        <input type="password" name="confirm_new_password" autocomplete="new-password">
+      </label>
+
+      <button type="submit" class="button button-primary">Save Security Changes</button>
+    </form>
+  </section>
+{% endblock %}

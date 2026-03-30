@@ -1,0 +1,17 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="page-hero">
+    <div class="container page-hero__content page-hero__content--detail about-hero">
+      <div class="about-hero__copy">
+        <p class="eyebrow">About</p>
+        <h1>{{ siteSettings.about_intro }}</h1>
+        <p class="hero-body">{{ siteSettings.about_body }}</p>
+      </div>
+      <div class="about-hero__media">
+        <img src="/assets/img/Me-20260319.png" alt="Yes, this is me :)" class="about-hero__image">
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

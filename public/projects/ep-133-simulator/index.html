@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EP-133 K.O. II Sampler Composer Simulator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="page-layout">
+        <div class="menu-bar">
+            <div class="menu-header">
+                <h2>EP-133 Simulator</h2>
+                <p></p>
+            </div>
+            <nav class="menu-nav">
+                <ul class="menu-list">
+
+                    <!-- <li class="menu-item">
+                        <button class="menu-btn" data-menu="samples">
+                            <span class="menu-icon">🎵</span>
+                            <span class="menu-text">Samples</span>
+                        </button>
+                    </li>
+                    <li class="menu-item">
+                        <button class="menu-btn" data-menu="patterns">
+                            <span class="menu-icon">🔢</span>
+                            <span class="menu-text">Patterns</span>
+                        </button>
+                    </li> -->
+                    <li class="menu-item">
+                        <button class="menu-btn" data-menu="settings">
+                            <span class="menu-icon">⚙️</span>
+                            <span class="menu-text">Settings</span>
+                        </button>
+                    </li>
+                    <!-- <li class="menu-item">
+                        <button class="menu-btn" data-menu="help">
+                            <span class="menu-icon">❓</span>
+                            <span class="menu-text">Help</span>
+                        </button>
+                    </li> -->
+                    <li class="menu-item">
+                        <button class="menu-btn" data-menu="about">
+                            <span class="menu-icon">ℹ️</span>
+                            <span class="menu-text">About</span>
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+            <div class="menu-footer">
+                <!-- Connection Status Indicator -->
+                <div class="connection-status">
+                    <span class="connection-dot"></span>
+                    <span class="connection-text"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <div class="device-container">
+                <div class="ep133-device">
+                    <!-- Top Section with Tabs -->
+                    <div class="top-section">
+                        <div class="tab-bar">
+                            <div class="tab" data-tab="output">OUTPUT</div>
+                            <div class="tab input" data-tab="input">INPUT</div>
+                            <div class="tab sync" data-tab="sync">SYNC</div>
+                            <div class="tab midi" data-tab="midi">MIDI</div>
+                            <div class="tab usb" data-tab="usb">USB</div>
+                            <div class="tab power" data-tab="power">POWER</div>
+                        </div>
+                    </div>
+
+                    <!-- Device Header -->
+                    <div class="device-header">
+                        <div class="device-title">
+                            <h1>K.O. II</h1>
+                            <p class="japanese">サンプラー</p>
+                            <br /><br /><br /><br /><br />
+                            <div class="device-subtitle">
+                                64 MB SAMPLER COMPOSER
+                            </div>
+                        </div>
+                        <div class="speaker-grille"></div>
+                    </div>
+
+                    <!-- Main Display -->
+                    <div class="main-display">
+                        <div class="display-content">
+                            <div class="status-indicators">
+                                <div class="status-grid">
+                                    <!-- 80 status icons in 20 columns x 4 rows -->
+                                    <div class="status-icon" id="1" statusid="1-battery" data-icon="1"></div>
+                                    <div class="status-icon" id="2" statusid="2-fadervaluehighest" data-icon="2"></div>
+                                    <div class="status-icon" id="3" statusid="3-groupaactive" data-icon="3"></div>
+                                    <div class="status-icon" id="4" statusid="4-syncactivity" data-icon="4"></div>
+                                    <div class="status-icon" id="5" statusid="5-midiactivity" data-icon="5"></div>
+                                    <div class="status-icon" id="6" statusid="6-usbmidi" data-icon="6"></div>
+                                    <div class="status-icon" id="7" statusid="7-barmode" data-icon="7"></div>
+                                    <div class="status-icon" id="8" statusid="8" data-icon="8"></div>
+                                    <div class="status-icon" id="9" statusid="9" data-icon="9"></div>
+                                    <div class="status-icon" id="10" statusid="10" data-icon="10"></div>
+                                    <div class="status-icon" id="11" statusid="11" data-icon="11"></div>
+                                    <div class="status-icon" id="12" statusid="12-bpm" data-icon="12"></div>
+                                    <div class="status-icon" id="13" statusid="13-samplemode" data-icon="13"></div>
+                                    <div class="status-icon" id="14" statusid="14-time" data-icon="14"></div>
+                                    <div class="status-icon" id="15" statusid="15-stereo" data-icon="15"></div>
+                                    <div class="status-icon" id="16" statusid="16-xlevel2" data-icon="16"></div>
+                                    <div class="status-icon" id="17" statusid="17-xlevel3" data-icon="17"></div>
+                                    <div class="status-icon" id="18" statusid="18-highlevel" data-icon="18"></div>
+                                    <div class="status-icon" id="19" statusid="19-ylevel2" data-icon="19"></div>
+                                    <div class="status-icon" id="20" statusid="20-ylevel3" data-icon="20"></div>
+
+                                    <!-- Row 2 -->
+                                    <div class="status-icon" id="21" statusid="21-mute" data-icon="21"></div>
+                                    <div class="status-icon" id="22" statusid="22-fadervaluehigh" data-icon="22"></div>
+                                    <div class="status-icon" id="23" statusid="23-groupbactive" data-icon="23"></div>
+                                    <div class="status-icon" id="24" statusid="24-copy" data-icon="24"></div>
+                                    <div class="status-icon" id="25" statusid="25-paste" data-icon="25"></div>
+                                    <div class="status-icon" id="26" statusid="26-floppy" data-icon="26"></div>
+                                    <div class="status-icon" id="27" statusid="27-ticmode" data-icon="27"></div>
+                                    <div class="status-icon" id="28" statusid="28" data-icon="28"></div>
+                                    <div class="status-icon" id="29" statusid="29" data-icon="29"></div>
+                                    <div class="status-icon" id="30" statusid="30" data-icon="30"></div>
+                                    <div class="status-icon" id="31" statusid="31" data-icon="31"></div>
+                                    <div class="status-icon" id="32" statusid="32-metronome" data-icon="32"></div>
+                                    <div class="status-icon" id="33" statusid="33-chop" data-icon="33"></div>
+                                    <div class="status-icon" id="34" statusid="34-umbrella" data-icon="34"></div>
+                                    <div class="status-icon" id="35" statusid="35-mono" data-icon="35"></div>
+                                    <div class="status-icon" id="36" statusid="36-xlevel1" data-icon="36"></div>
+                                    <div class="status-icon" id="37" statusid="37-xlevel4" data-icon="37"></div>
+                                    <div class="status-icon" id="38" statusid="38-highmidlevel" data-icon="38"></div>
+                                    <div class="status-icon" id="39" statusid="39-ylevel1" data-icon="39"></div>
+                                    <div class="status-icon" id="40" statusid="40-ylevel4" data-icon="40"></div>
+
+                                    <!-- Row 3 -->
+                                    <div class="status-icon" id="41" statusid="41-keysmode" data-icon="41"></div>
+                                    <div class="status-icon" id="42" statusid="42-fadervaluelow" data-icon="42"></div>
+                                    <div class="status-icon" id="43" statusid="43-groupcactive" data-icon="43"></div>
+                                    <div class="status-icon" id="44" statusid="44-sound" data-icon="44"></div>
+                                    <div class="status-icon" id="45" statusid="45-trim" data-icon="45"></div>
+                                    <div class="status-icon" id="46" statusid="46-envelope" data-icon="46"></div>
+                                    <div class="status-icon" id="47" statusid="47-time" data-icon="47"></div>
+                                    <div class="status-icon" id="48" statusid="48-record" data-icon="48"></div>
+                                    <div class="status-icon" id="49" statusid="49-play" data-icon="49"></div>
+                                    <div class="status-icon" id="50" statusid="50-loop" data-icon="50"></div>
+                                    <div class="status-icon" id="51" statusid="51-numpadactive" data-icon="51"></div>
+                                    <div class="status-icon" id="52" statusid="52-fxactive" data-icon="52"></div>
+                                    <div class="status-icon" id="53" statusid="53-fxmode" data-icon="53"></div>
+                                    <div class="status-icon" id="54" statusid="54-fxactive" data-icon="54"></div>
+                                    <div class="status-icon" id="55" statusid="55-compressor" data-icon="55"></div>
+                                    <div class="status-icon" id="56" statusid="56-mic" data-icon="56"></div>
+                                    <div class="status-icon" id="57" statusid="57-linein" data-icon="57"></div>
+                                    <div class="status-icon" id="58" statusid="58-lowmidlevel" data-icon="58"></div>
+                                    <div class="status-icon" id="59" statusid="59-quantizemode" data-icon="59"></div>
+                                    <div class="status-icon" id="60" statusid="60-freetimemode" data-icon="60"></div>
+
+                                    <!-- Row 4 -->
+                                    <div class="status-icon" id="61" statusid="61-faderautomation" data-icon="61"></div>
+                                    <div class="status-icon" id="62" statusid="62-fadervaluelowest" data-icon="62">
+                                    </div>
+                                    <div class="status-icon" id="63" statusid="63-groupdactive" data-icon="63"></div>
+
+                                    <!-- Handle as single icon -->
+                                    <div class="status-icon" id="64" statusid="64-soundmode" data-icon="64"></div>
+                                    <div class="status-icon" id="65" statusid="65-soundmode" data-icon="65"></div>
+
+                                    <div class="status-icon" id="66" statusid="66-autosave" data-icon="66"></div>
+
+                                    <!-- Handle as single icon -->
+                                    <div class="status-icon" id="67" statusid="67-mainmode" data-icon="67"></div>
+                                    <div class="status-icon" id="68" statusid="68-mainmode" data-icon="68"></div>
+
+                                    <div class="status-icon" id="69" statusid="69-newpattern" data-icon="69"></div>
+
+                                    <!-- Handle as single icon -->
+                                    <div class="status-icon" id="70" statusid="70-tempo" data-icon="70"></div>
+                                    <div class="status-icon" id="71" statusid="71-tempo" data-icon="71"></div>
+
+                                    <!-- Handle as single icon -->
+                                    <div class="status-icon" id="72" statusid="72-erase" data-icon="72"></div>
+                                    <div class="status-icon" id="73" statusid="73-erase" data-icon="73"></div>
+
+                                    <!-- Handle as single icon -->
+                                    <div class="status-icon" id="74" statusid="74-system" data-icon="74"></div>
+                                    <div class="status-icon" id="75" statusid="75-system" data-icon="75"></div>
+
+                                    <div class="status-icon" id="76" statusid="76-computer" data-icon="76"></div>
+                                    <div class="status-icon" id="77" statusid="77-clip" data-icon="77"></div>
+                                    <div class="status-icon" id="78" statusid="78-lowlevel" data-icon="78"></div>
+
+                                    <!-- Handle as single icon -->
+                                    <div class="status-icon" id="79" statusid="79-swing" data-icon="79"></div>
+                                    <div class="status-icon" id="80" statusid="80-swing" data-icon="80"></div>
+                                </div>
+                                <div class="status-info">
+                                    <div class="status-light red active"></div>
+                                    <div class="status-text">REC</div>
+                                    <div class="bpm-display">133</div>
+                                    <div class="time-signature">△</div>
+                                    <div class="fx-indicator">FX</div>
+                                    <div class="status-light blue"></div>
+                                </div>
+                            </div>
+                            <!--<div class="pattern-info">
+                        <div class="pattern-number">1</div>
+                        <div class="play-controls">
+                            <div class="play-button active">▶</div>
+                        </div>
+                    </div>-->
+                        </div>
+                    </div>
+
+                    <!-- Control Section -->
+                    <div class="control-section">
+                        <!-- Left Controls -->
+                        <div class="left-controls">
+                            <div class="volume-control">
+                                <div class="knob-label">VOLUME</div>
+                                <div class="knob white-knob" data-control="volume"></div>
+                            </div>
+
+                            <div class="mode-buttons">
+                                <button class="mode-btn" data-btn="sound">KEYS</button>
+                                <button class="mode-btn" data-btn="mix">FADER</button>
+                            </div>
+
+                            <div class="slider-container">
+                                <input type="range" class="slider" min="0" max="100" value="50"
+                                    data-control="crossfader">
+                            </div>
+
+                            <div class="mode-buttons">
+                                <button class="mode-btn" data-btn="shift">SHIFT</button>
+                            </div>
+                        </div>
+
+                        <!-- Center Pad Matrix -->
+                        <div class="pad-matrix">
+                            <!-- Row 1 -->
+                            <div class="pad-row">
+                                <div class="pad-container">
+                                    <button class="half-pad" data-pad="SOUND">
+                                        <span class="pad-number">SOUND</span>
+                                    </button>
+                                    <button class="half-pad" data-pad="EDIT">
+                                        <span class="pad-number">EDIT</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="half-pad" data-pad="MAIN">
+                                        <span class="pad-number">MAIN</span>
+                                    </button>
+                                    <button class="half-pad" data-pad="COMMIT">
+                                        <span class="pad-number">COMMIT</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="half-pad" data-pad="TEMPO">
+                                        <span class="pad-number">TEMPO</span>
+                                    </button>
+                                    <button class="half-pad" data-pad="LOOP">
+                                        <span class="pad-number">LOOP</span>
+                                    </button>
+                                </div>
+
+                                <button class="spacer-pad" data-pad="">
+                                </button>
+
+                                <div class="tempo-control">
+                                    <div class="knob-label">BPM</div>
+                                    <div class="knob orange-knob" data-control="tempo"></div>
+                                </div>
+
+                                <div class="metronome-control">
+                                    <div class="knob-label">METRONOME</div>
+                                    <div class="knob black-knob" data-control="METRONOME"></div>
+                                </div>
+                            </div>
+                            <!-- Row 2 -->
+                            <div class="pad-row">
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                    </div>
+                                    <button class="pad pad-grouppad" data-pad="A">
+                                        <span class="pad-number">A</span>
+                                        <span class="pad-label">*</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">LEVEL</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="7">
+                                        <span class="pad-number">7</span>
+                                        <span class="pad-label"></span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">PITCH</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="8">
+                                        <span class="pad-number">8</span>
+                                        <span class="pad-label"></span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">TIME</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="9">
+                                        <span class="pad-number">9</span>
+                                        <span class="pad-label"></span>
+                                    </button>
+                                </div>
+                                <!-- <button class="pad special-pad orange" data-pad="sample">
+                            <span class="pad-label">SAMPLE</span>
+                            <span class="pad-sublabel">CHOP</span>
+                        </button>
+                        <button class="pad special-pad orange" data-pad="timing">
+                            <span class="pad-label">TIMING</span>
+                            <span class="pad-sublabel">CORRECT</span>
+                        </button> -->
+                                <div class="pad-container">
+                                    <button class="half-pad orange" data-pad="sample">
+                                        <span class="pad-label">SAMPLE</span>
+                                    </button>
+                                    <button class="half-pad orange" data-pad="chop">
+                                        <span class="pad-label">CHOP</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="half-pad  orange" data-pad="timing">
+                                        <span class="pad-label">TIMING</span>
+                                    </button>
+                                    <button class="half-pad orange" data-pad="correct">
+                                        <span class="pad-label">CORRECT</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Row 3 -->
+                            <div class="pad-row">
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                    </div>
+                                    <button class="pad pad-grouppad" data-pad="B">
+                                        <span class="pad-number">B</span>
+                                        <span class="pad-label">-</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">LPF</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="4">
+                                        <span class="pad-number">4</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">HPF</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="5">
+                                        <span class="pad-number">5</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">FX</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="6">
+                                        <span class="pad-number">6</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="half-pad" data-pad="fx">
+                                        <span class="pad-label">FX</span>
+                                    </button>
+                                    <button class="half-pad" data-pad="output">
+                                        <span class="pad-label">OUTPUT</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="half-pad" data-pad="erase">
+                                        <span class="pad-label">ERASE</span>
+                                    </button>
+                                    <button class="half-pad" data-pad="system">
+                                        <span class="pad-label">SYSTEM</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Row 4 -->
+                            <div class="pad-row">
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                    </div>
+                                    <button class="pad pad-grouppad" data-pad="C">
+                                        <span class="pad-number">C</span>
+                                        <span class="pad-label">^</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">ATK</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="1">
+                                        <span class="pad-number">1</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">REL</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="2">
+                                        <span class="pad-number">2</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">PAN</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="3">
+                                        <span class="pad-number">3</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="pad" data-pad="-">
+                                        <span class="pad-label">-</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="pad" data-pad="+">
+                                        <span class="pad-label">+</span>
+                                    </button>
+                                </div>
+                            </div>
+                            <!-- Row 5 -->
+                            <div class="pad-row">
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                    </div>
+                                    <button class="pad pad-grouppad" data-pad="D">
+                                        <span class="pad-number">D</span>
+                                        <span class="pad-label">v</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">TUNE</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad=".">
+                                        <span class="pad-label">.</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">VEL</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="0">
+                                        <span class="pad-number">0</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator">
+                                        <div class="indicator-light"></div>
+                                        <span class="indicator-text">MOD</span>
+                                    </div>
+                                    <button class="pad pad-numberpad" data-pad="enter">
+                                        <span class="pad-label">ENTER</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <div class="pad-indicator multiple-lights">
+                                        <div class="indicator-light"></div>
+                                        <div class="indicator-light"></div>
+                                    </div>
+                                    <button class="pad special-pad orange" data-pad="record">
+                                        <span class="pad-label">RECORD</span>
+                                    </button>
+                                </div>
+                                <div class="pad-container">
+                                    <button class="pad pad-play" data-pad="play">
+                                        <span class="pad-label">PLAY</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Controls -->
+                        <!-- <div class="right-controls">
+                    <div class="tempo-control">
+                        <div class="knob-label">TEMPO</div>
+                        <div class="knob orange-knob" data-control="tempo"></div>
+                    </div>
+                    
+                    <div class="pitch-control">
+                        <div class="knob-label">PITCH</div>
+                        <div class="knob black-knob" data-control="pitch"></div>
+                    </div>
+                </div> -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- About Dialog -->
+        <div id="about-dialog" class="dialog-overlay">
+            <div class="dialog-content">
+                <div class="dialog-header">
+                    <h3>About EP-133 Simulator</h3>
+                    <button class="dialog-close" id="close-about-dialog">&times;</button>
+                </div>
+                <div class="dialog-body">
+                    <div class="about-logo">
+                        <h1>K.O. II</h1>
+                        <p class="japanese">サンプラー</p>
+                        <div class="device-subtitle">64 MB SAMPLER COMPOSER</div>
+                    </div>
+
+                    <div class="about-info">
+                        <p><strong>Version:</strong> 0.0.1-Beta</p>
+                        <p><strong>Developer:</strong> Toji Studios</p>
+                        <p><strong>Description:</strong> A web-based simulator for the Teenage Engineering EP-133 K.O.
+                            II Sampler Composer.</p>
+
+                        <div class="features-list">
+                            <h4>Features:</h4>
+                            <ul>
+                                <li>🎵 Sample Management</li>
+                                <li>🔢 Pattern Sequencing</li>
+                                <li>⚙️ Device Settings</li>
+                                <li>📱 Mobile Responsive</li>
+                                <li>🎹 Interactive Pads</li>
+                                <li>🎛️ Realistic Controls</li>
+                            </ul>
+                        </div>
+
+                        <div class="about-footer">
+                            <p>This is a fan-made simulator for educational and entertainment purposes.</p>
+                            <p>Not affiliated with Teenage Engineering.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Settings Dialog -->
+        <div id="settings-dialog" class="dialog-overlay">
+            <div class="dialog-content">
+                <div class="dialog-header">
+                    <h3>Settings</h3>
+                    <button class="dialog-close" id="close-settings-dialog">&times;</button>
+                </div>
+                <div class="dialog-body">
+                    <div class="settings-section">
+                        <h4>Appearance</h4>
+                        <div class="setting-item">
+                            <label for="theme-selector">Theme:</label>
+                            <div class="theme-selector">
+                                <button class="theme-btn" data-theme="dark">
+                                    <span class="theme-icon">🌙</span>
+                                    <span class="theme-label">Dark</span>
+                                </button>
+                                <button class="theme-btn" data-theme="light">
+                                    <span class="theme-icon">☀️</span>
+                                    <span class="theme-label">Light</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4>Audio</h4>
+                        <div class="setting-item">
+                            <label for="volume-default">Default Volume:</label>
+                            <input type="range" id="volume-default" min="0" max="100" value="50" class="setting-slider">
+                            <span class="setting-value">50</span>
+                        </div>
+                        <div class="setting-item">
+                            <label for="tempo-default">Default Tempo:</label>
+                            <input type="range" id="tempo-default" min="60" max="180" value="133"
+                                class="setting-slider">
+                            <span class="setting-value">133 BPM</span>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h4>Interface</h4>
+                        <div class="setting-item">
+                            <label for="transform-value">Transform Angle:</label>
+                            <input type="range" id="transform-value" min="0" max="45" value="0" step="0.5"
+                                class="setting-slider">
+                            <span class="setting-value">0°</span>
+                        </div>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="show-tooltips" checked>
+                                <span class="checkmark"></span>
+                                Show tooltips
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="enable-sounds" checked>
+                                <span class="checkmark"></span>
+                                Enable button sounds
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="settings-footer">
+                        <button class="settings-btn primary" id="save-settings">Save Settings</button>
+                        <button class="settings-btn secondary" id="reset-settings">Reset to Defaults</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- IDs -->
+        <script src="status-ids.js"></script>
+
+        <!-- Core Modules -->
+        <script src="js/config.js"></script>
+        <script src="js/audio-engine.js"></script>
+        <script src="js/sequencer.js"></script>
+        <script src="js/ui-manager.js"></script>
+
+        <!-- Main Controller -->
+        <script src="js/main.js"></script>
+</body>
+
+</html>

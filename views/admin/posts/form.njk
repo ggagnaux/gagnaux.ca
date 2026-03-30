@@ -1,0 +1,477 @@
+{% extends "admin-layout.njk" %}
+
+{% block content %}
+  {% set markdownMediaItems = mediaLibraryItems or [] %}
+  <section class="admin-header">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">Admin / Posts</p>
+        <h1>{{ formTitle }}</h1>
+      </div>
+      <a href="/admin/posts" class="button button-secondary">&lt; Back to Posts</a>
+    </div>
+  </section>
+  <section class="admin-panel">
+    <form
+      action="{{ '/admin/posts/' ~ post.id if post else '/admin/posts' }}"
+      method="post"
+      enctype="multipart/form-data"
+      id="post-edit-form"
+    >
+      <input type="hidden" name="active_post_tab" value="{{ activePostTab or 'details' }}" data-active-post-tab-input>
+      <input type="hidden" name="upload_session_id" value="{{ uploadSessionId or '' }}">
+    </form>
+
+    <div class="admin-settings-tabs admin-project-tabs admin-post-tabs" data-post-tabs>
+      <div class="admin-settings-tabs__list admin-project-tabs__list admin-post-tabs__list" role="tablist" aria-label="Post sections">
+        <button
+          type="button"
+          class="admin-settings-tabs__trigger admin-project-tabs__trigger admin-post-tabs__trigger{% if (activePostTab or 'details') == 'details' %} is-active{% endif %}"
+          data-post-tab-trigger
+          data-post-tab-target="details"
+          role="tab"
+          aria-selected="{{ 'true' if (activePostTab or 'details') == 'details' else 'false' }}"
+        >
+          Details
+        </button>
+        <button
+          type="button"
+          class="admin-settings-tabs__trigger admin-project-tabs__trigger admin-post-tabs__trigger{% if (activePostTab or 'details') == 'images' %} is-active{% endif %}"
+          data-post-tab-trigger
+          data-post-tab-target="images"
+          role="tab"
+          aria-selected="{{ 'true' if (activePostTab or 'details') == 'images' else 'false' }}"
+        >
+          Images
+        </button>
+        <button
+          type="button"
+          class="admin-settings-tabs__trigger admin-project-tabs__trigger admin-post-tabs__trigger{% if (activePostTab or 'details') == 'distribution' %} is-active{% endif %}"
+          data-post-tab-trigger
+          data-post-tab-target="distribution"
+          role="tab"
+          aria-selected="{{ 'true' if (activePostTab or 'details') == 'distribution' else 'false' }}"
+        >
+          Distribution
+        </button>
+      </div>
+
+      <section class="admin-settings-tabs__panel admin-project-tabs__panel admin-post-tabs__panel{% if (activePostTab or 'details') == 'details' %} is-active{% endif %}" data-post-tab-panel data-post-tab-panel-id="details">
+        <div class="inline-fields">
+          <label class="admin-floating-field">
+            <input type="text" name="title" value="{{ post.title if post else '' }}" form="post-edit-form" placeholder=" " aria-label="Title" required>
+            <span class="admin-floating-field__label">Title</span>
+          </label>
+          <label class="admin-floating-field">
+            <input type="text" name="slug" value="{{ post.slug if post else '' }}" form="post-edit-form" placeholder=" " aria-label="Slug">
+            <span class="admin-floating-field__label">Slug</span>
+          </label>
+        </div>
+        <label class="admin-floating-field admin-floating-field--textarea">
+          <textarea name="excerpt" rows="3" form="post-edit-form" placeholder=" " aria-label="Excerpt" required>{{ post.excerpt if post else '' }}</textarea>
+          <span class="admin-floating-field__label">Excerpt</span>
+        </label>
+        <div class="field-group">
+          <div class="field-heading">
+            <button type="button" class="button button-secondary button-compact" data-markdown-help-open>? Markdown Help</button>
+          </div>
+          <label class="admin-floating-field admin-floating-field--textarea" for="post-body-markdown">
+            <textarea id="post-body-markdown" name="body_markdown" rows="16" form="post-edit-form" placeholder=" " aria-label="Body Markdown" required data-markdown-dropzone>{{ post.body_markdown if post else '' }}</textarea>
+            <span class="admin-floating-field__label">Body Markdown</span>
+          </label>
+          {% if markdownMediaItems and markdownMediaItems.length %}
+            <section class="admin-post-markdown-assets" aria-label="Media library assets for markdown">
+              <div class="admin-post-markdown-assets__header">
+                <strong>Media Library</strong>
+                <span class="muted-text">Drag an icon into the markdown field to insert an image tag.</span>
+              </div>
+              <div class="admin-post-markdown-assets__grid">
+                {% for image in markdownMediaItems %}
+                  <button
+                    type="button"
+                    class="admin-post-markdown-asset"
+                    draggable="true"
+                    data-markdown-asset
+                    data-markdown-snippet="{{ ('![' ~ (image.alt_text or image.original_name or ('Media image ' ~ loop.index)) ~ '](/uploads/' ~ image.filename ~ ')') | escape }}"
+                    aria-label="Insert markdown for media image {{ loop.index }}"
+                  >
+                    <img src="/uploads/{{ image.filename }}" alt="{{ image.alt_text or image.original_name or ('Media image ' ~ loop.index) }}" class="admin-post-markdown-asset__image">
+                    <span class="admin-post-markdown-asset__label">Image {{ loop.index }}</span>
+                  </button>
+                {% endfor %}
+              </div>
+            </section>
+          {% endif %}
+        </div>
+        <div class="field-group">
+          <div class="field-heading">
+            <label for="post-tag-input">Tags</label>
+          </div>
+          <input type="hidden" name="tags" value="{{ post.tags | join(', ') if post else '' }}" form="post-edit-form" data-tag-input-value>
+          <div class="admin-tag-input" data-tag-input>
+            <div class="admin-tag-input__pills" data-tag-input-pills aria-live="polite"></div>
+            <input
+              id="post-tag-input"
+              type="text"
+              class="admin-tag-input__field"
+              placeholder="Type a tag and press Enter"
+              autocomplete="off"
+              data-tag-input-field
+            >
+          </div>
+          <p class="muted-text">Press Enter or comma to add a tag. Click a pill to remove it.</p>
+        </div>
+        <div class="inline-fields">
+          <fieldset class="admin-toggle-group">
+            <legend>Status</legend>
+            <div class="admin-pill-toggle" role="radiogroup" aria-label="Post status">
+              <label class="admin-pill-toggle__option">
+                <input type="radio" name="status" value="draft" form="post-edit-form" {% if not post or post.status == 'draft' %}checked{% endif %}>
+                <span>Draft</span>
+              </label>
+              <label class="admin-pill-toggle__option">
+                <input type="radio" name="status" value="published" form="post-edit-form" {% if post and post.status == 'published' %}checked{% endif %}>
+                <span>Published</span>
+              </label>
+            </div>
+          </fieldset>
+          <div class="admin-feature-toggle">
+            <span class="admin-feature-toggle__label">Feature on homepage</span>
+            <label class="admin-pill-switch">
+              <input type="checkbox" name="is_featured" value="1" form="post-edit-form" {% if post and post.is_featured %}checked{% endif %}>
+              <span>Featured</span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <section class="admin-settings-tabs__panel admin-project-tabs__panel admin-project-tabs__panel--images admin-post-tabs__panel{% if (activePostTab or 'details') == 'images' %} is-active{% endif %}" data-post-tab-panel data-post-tab-panel-id="images">
+        {% if post %}
+          <section class="admin-project-screenshots admin-project-screenshots--tabbed">
+            <div class="panel-heading panel-heading--compact">
+              <h2>Post Images</h2>
+              <p class="muted-text">Manage the images used for this post.</p>
+            </div>
+            <form action="/admin/posts/{{ post.id }}/images" method="post" enctype="multipart/form-data" class="admin-form admin-media-upload-form admin-project-screenshot-upload" data-post-image-upload-form>
+              <input type="hidden" name="active_post_tab" value="images">
+              <label class="admin-media-upload-control">
+                <span class="admin-media-upload-control__label">Add images</span>
+                <span class="admin-media-upload-control__hint">Upload one or more images. They will be resized to a maximum width of 2000px.</span>
+                <input class="admin-media-upload-control__input" type="file" name="images" accept="image/*" multiple data-post-image-upload-input>
+              </label>
+              <div class="form-actions" data-post-image-upload-actions hidden>
+                <button type="submit" class="button button-primary">Upload Images</button>
+              </div>
+            </form>
+
+            {% if post.images and post.images.length %}
+              <form action="/admin/posts/{{ post.id }}/images/delete-selected" method="post" data-post-image-selection-form data-confirm-delete-form data-confirm-title="Remove Selected Images?" data-confirm-message="This will permanently remove the selected images from &quot;{{ post.title | escape }}&quot;.">
+                <input type="hidden" name="active_post_tab" value="images">
+                <div class="admin-project-screenshot-grid">
+                  {% for image in post.images %}
+                    <article class="admin-project-screenshot-card admin-post-image-card">
+                      <div class="admin-project-screenshot-card__topline">
+                        <strong>Image {{ loop.index }}</strong>
+                        <label class="admin-project-screenshot-card__selector" aria-label="Select image {{ loop.index }}">
+                          <input type="checkbox" name="imageIds" value="{{ image.id }}" data-post-image-select>
+                          <span></span>
+                        </label>
+                      </div>
+                      <img src="/uploads/{{ image.filename }}" alt="{{ image.alt_text or post.title ~ ' image ' ~ loop.index }}" class="admin-project-screenshot-card__image">
+                      <div class="admin-project-screenshot-card__meta">
+                        <span class="muted-text">{{ image.filename }}</span>
+                      </div>
+                    </article>
+                  {% endfor %}
+                </div>
+                <div class="form-actions admin-project-screenshot-bulk-actions" data-post-image-bulk-actions hidden>
+                  <button type="submit" class="button button-danger">Remove Selected</button>
+                </div>
+              </form>
+            {% else %}
+              <p class="muted-text">No images uploaded yet.</p>
+            {% endif %}
+          </section>
+        {% else %}
+          <section class="admin-project-screenshots admin-project-screenshots--tabbed">
+            <div class="panel-heading panel-heading--compact">
+              <h2>Post Images</h2>
+              <p class="muted-text">Upload images now and they will be attached when the post is saved.</p>
+            </div>
+            <form action="/admin/posts/draft-images" method="post" enctype="multipart/form-data" class="admin-form admin-media-upload-form admin-project-screenshot-upload" data-post-image-upload-form>
+              <input type="hidden" name="upload_session_id" value="{{ uploadSessionId }}">
+              <label class="admin-media-upload-control">
+                <span class="admin-media-upload-control__label">Post Images</span>
+                <span class="admin-media-upload-control__hint">Choose one or more images for this post.</span>
+                <input class="admin-media-upload-control__input" type="file" name="images" accept="image/*" multiple data-post-image-upload-input>
+              </label>
+              <div class="form-actions" data-post-image-upload-actions hidden>
+                <button type="submit" class="button button-primary">Upload Images</button>
+              </div>
+            </form>
+
+            {% if draftPostImages and draftPostImages.length %}
+              <form action="/admin/posts/draft-images/delete-selected" method="post" data-post-image-selection-form data-confirm-delete-form data-confirm-title="Remove Selected Images?" data-confirm-message="This will permanently remove the selected draft images.">
+                <input type="hidden" name="upload_session_id" value="{{ uploadSessionId }}">
+                <div class="admin-project-screenshot-grid">
+                  {% for image in draftPostImages %}
+                    <article class="admin-project-screenshot-card admin-post-image-card">
+                      <div class="admin-project-screenshot-card__topline">
+                        <strong>Image {{ loop.index }}</strong>
+                        <label class="admin-project-screenshot-card__selector" aria-label="Select image {{ loop.index }}">
+                          <input type="checkbox" name="imageIds" value="{{ image.id }}" data-post-image-select>
+                          <span></span>
+                        </label>
+                      </div>
+                      <img src="/uploads/{{ image.filename }}" alt="{{ image.alt_text or 'Draft post image ' ~ loop.index }}" class="admin-project-screenshot-card__image">
+                      <div class="admin-project-screenshot-card__meta">
+                        <span class="muted-text">{{ image.filename }}</span>
+                      </div>
+                    </article>
+                  {% endfor %}
+                </div>
+                <div class="form-actions admin-project-screenshot-bulk-actions" data-post-image-bulk-actions hidden>
+                  <button type="submit" class="button button-danger">Remove Selected</button>
+                </div>
+              </form>
+            {% else %}
+              <p class="muted-text">No images uploaded yet.</p>
+            {% endif %}
+          </section>
+        {% endif %}
+      </section>
+
+      <section class="admin-settings-tabs__panel admin-project-tabs__panel admin-post-tabs__panel{% if (activePostTab or 'details') == 'distribution' %} is-active{% endif %}" data-post-tab-panel data-post-tab-panel-id="distribution">
+        {% if post %}
+          {% if postDistributions and postDistributions.length %}
+            <section class="admin-distribution-settings-tabs admin-post-distribution-tabs" data-distribution-tabs>
+              <div class="admin-distribution-settings-tabs__list" role="tablist" aria-label="Post distribution destinations">
+                {% for distribution in postDistributions %}
+                  <button
+                    type="button"
+                    class="admin-distribution-settings-tabs__trigger{% if loop.first %} is-active{% endif %}"
+                    data-distribution-tab-trigger
+                    data-distribution-tab-target="{{ distribution.destination_key }}"
+                    role="tab"
+                    aria-selected="{{ 'true' if loop.first else 'false' }}"
+                  >
+                    {{ distribution.label }}
+                  </button>
+                {% endfor %}
+              </div>
+
+              {% for distribution in postDistributions %}
+                <section
+                  class="admin-distribution-settings-tabs__panel{% if loop.first %} is-active{% endif %}"
+                  data-distribution-tab-panel
+                  data-distribution-tab-panel-id="{{ distribution.destination_key }}"
+                >
+                  <article class="admin-distribution-card">
+                    <div class="panel-heading panel-heading--compact">
+                      <div>
+                        <h2>{{ distribution.label }}</h2>
+                        <p class="muted-text">{% if distribution.destination_key == 'linkedin' %}Announcement post{% elif distribution.destination_key == 'medium' %}Long-form article{% elif distribution.destination_key == 'substack' %}Newsletter / article{% else %}{{ distribution.destination_type | replace('_', ' ') }}{% endif %}</p>
+                      </div>
+                      <span class="admin-distribution-status admin-distribution-status--{{ distribution.status }}">{{ distribution.status_label }}</span>
+                    </div>
+                    <div class="admin-distribution-meta">
+                      <span><strong>Mode:</strong> {{ distribution.posting_mode | replace('_', ' ') }}</span>
+                      {% if distribution.published_at %}<span><strong>Published:</strong> {{ distribution.published_at | date }}</span>{% endif %}
+                      {% if distribution.last_attempted_at and not distribution.published_at %}<span><strong>Last Attempt:</strong> {{ distribution.last_attempted_at | date }}</span>{% endif %}
+                    </div>
+                    {% if distribution.destination_key == 'linkedin' %}
+                      <label class="admin-floating-field admin-floating-field--textarea">
+                        <textarea rows="6" readonly data-copy-source="distribution-share-{{ distribution.id }}">{{ distribution.payload.share_text }}</textarea>
+                        <span class="admin-floating-field__label">LinkedIn Announcement</span>
+                      </label>
+                      <div class="inline-fields">
+                        <label class="admin-floating-field admin-floating-field--textarea">
+                          <textarea rows="4" readonly data-copy-source="distribution-short-{{ distribution.id }}">{{ distribution.payload.short_announcement }}</textarea>
+                          <span class="admin-floating-field__label">Short Version</span>
+                        </label>
+                        <label class="admin-floating-field admin-floating-field--textarea">
+                          <textarea rows="3" readonly data-copy-source="distribution-tags-{{ distribution.id }}">{{ distribution.payload.hashtags | join(' ') }}</textarea>
+                          <span class="admin-floating-field__label">Suggested Tags</span>
+                        </label>
+                      </div>
+                    {% elif distribution.destination_key == 'medium' %}
+                      <div class="inline-fields">
+                        <label class="admin-floating-field">
+                          <input type="text" readonly value="{{ distribution.payload.article_title }}">
+                          <span class="admin-floating-field__label">Article Title</span>
+                        </label>
+                        <label class="admin-floating-field admin-floating-field--textarea">
+                          <textarea rows="4" readonly data-copy-source="distribution-subtitle-{{ distribution.id }}">{{ distribution.payload.article_subtitle }}</textarea>
+                          <span class="admin-floating-field__label">Article Subtitle</span>
+                        </label>
+                      </div>
+                      <label class="admin-floating-field admin-floating-field--textarea">
+                        <textarea rows="14" readonly data-copy-source="distribution-body-{{ distribution.id }}">{{ distribution.payload.article_body_markdown }}</textarea>
+                        <span class="admin-floating-field__label">Medium Article Body</span>
+                      </label>
+                      <label class="admin-floating-field admin-floating-field--textarea">
+                        <textarea rows="3" readonly data-copy-source="distribution-canonical-note-{{ distribution.id }}">{{ distribution.payload.canonical_note }}</textarea>
+                        <span class="admin-floating-field__label">Canonical Note</span>
+                      </label>
+                    {% elif distribution.destination_key == 'substack' %}
+                      <div class="inline-fields">
+                        <label class="admin-floating-field">
+                          <input type="text" readonly value="{{ distribution.payload.email_subject }}">
+                          <span class="admin-floating-field__label">Email Subject</span>
+                        </label>
+                        <label class="admin-floating-field admin-floating-field--textarea">
+                          <textarea rows="4" readonly data-copy-source="distribution-intro-{{ distribution.id }}">{{ distribution.payload.intro_blurb }}</textarea>
+                          <span class="admin-floating-field__label">Intro Blurb</span>
+                        </label>
+                      </div>
+                      <label class="admin-floating-field admin-floating-field--textarea">
+                        <textarea rows="14" readonly data-copy-source="distribution-body-{{ distribution.id }}">{{ distribution.payload.newsletter_body_markdown }}</textarea>
+                        <span class="admin-floating-field__label">Substack Newsletter Body</span>
+                      </label>
+                      <label class="admin-floating-field admin-floating-field--textarea">
+                        <textarea rows="3" readonly data-copy-source="distribution-newsletter-{{ distribution.id }}">{{ distribution.payload.newsletter_summary }}</textarea>
+                        <span class="admin-floating-field__label">Newsletter Summary</span>
+                      </label>
+                    {% endif %}
+                    <div class="admin-distribution-links">
+                      {% if distribution.payload.canonical_url %}<a href="{{ distribution.payload.canonical_url }}" class="button button-secondary" target="_blank" rel="noopener noreferrer">Open Post</a>{% endif %}
+                      {% if distribution.destination_url %}<a href="{{ distribution.destination_url }}" class="button button-secondary" target="_blank" rel="noopener noreferrer">Open Destination</a>{% endif %}
+                      {% if distribution.destination_key == 'linkedin' %}
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-share-{{ distribution.id }}">Copy Announcement</button>
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-short-{{ distribution.id }}">Copy Short Version</button>
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-tags-{{ distribution.id }}">Copy Tags</button>
+                      {% elif distribution.destination_key == 'medium' %}
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-subtitle-{{ distribution.id }}">Copy Subtitle</button>
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-body-{{ distribution.id }}">Copy Article Body</button>
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-canonical-note-{{ distribution.id }}">Copy Canonical Note</button>
+                      {% elif distribution.destination_key == 'substack' %}
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-intro-{{ distribution.id }}">Copy Intro</button>
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-body-{{ distribution.id }}">Copy Newsletter Body</button>
+                        <button type="button" class="button button-secondary" data-copy-target="distribution-newsletter-{{ distribution.id }}">Copy Summary</button>
+                      {% endif %}
+                      {% if distribution.status != 'published' %}
+                        <form action="/admin/posts/{{ post.id }}/distributions/{{ distribution.id }}/publish" method="post">
+                          <button type="submit" class="button button-secondary">Publish Now</button>
+                        </form>
+                        <form action="/admin/posts/{{ post.id }}/distributions/{{ distribution.id }}/mark-published" method="post">
+                          <button type="submit" class="button button-primary">Mark Published</button>
+                        </form>
+                      {% endif %}
+                    </div>
+                    {% if distribution.payload.warnings and distribution.payload.warnings.length %}
+                      {% for warning in distribution.payload.warnings %}
+                        <p class="muted-text">{{ warning }}</p>
+                      {% endfor %}
+                    {% endif %}
+                    {% if distribution.payload.hashtags and distribution.payload.hashtags.length and distribution.destination_key != 'linkedin' %}
+                      <p class="muted-text">Suggested tags: {{ distribution.payload.hashtags | join(' ') }}</p>
+                    {% endif %}
+                    {% if distribution.payload.image_url %}
+                      <p class="muted-text">Lead image: <a href="{{ distribution.payload.image_url }}" target="_blank" rel="noopener noreferrer">{{ distribution.payload.image_url }}</a></p>
+                    {% endif %}
+                    {% if distribution.error_message %}
+                      <p class="error-text">{{ distribution.error_message }}</p>
+                    {% endif %}
+                    {% if distribution.recent_attempts and distribution.recent_attempts.length %}
+                      <div class="admin-distribution-attempts">
+                        <p class="muted-text"><strong>Recent attempts</strong></p>
+                        {% for attempt in distribution.recent_attempts %}
+                          <p class="muted-text">{{ attempt.created_at | date }} · {{ attempt.status | replace('_', ' ') }}{% if attempt.error_message %} · {{ attempt.error_message }}{% endif %}</p>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                  </article>
+                </section>
+              {% endfor %}
+            </section>
+          {% else %}
+            <p class="muted-text">No enabled destinations yet. Configure them in Settings / Distribution.</p>
+          {% endif %}
+        {% else %}
+          <p class="muted-text">Save the post first to generate distribution records and share copy.</p>
+        {% endif %}
+      </section>
+    </div>
+
+    <div class="form-actions form-actions--project admin-settings-tabs__actions admin-project-tabs__actions">
+      <button type="submit" class="button button-primary" form="post-edit-form">Save Post</button>
+      {% if post %}
+        <form
+          action="/admin/posts/{{ post.id }}/delete"
+          method="post"
+          class="inline-delete"
+          data-confirm-delete-form
+          data-confirm-title="Delete Post?"
+          data-confirm-message="This will permanently delete the post <strong>&quot;{{ post.title | escape }}&quot;</strong>."
+        >
+          <button type="submit" class="button button-danger">Delete Post</button>
+        </form>
+      {% endif %}
+    </div>
+  </section>
+  {% if post or (draftPostImages and draftPostImages.length) %}
+    <div class="confirm-modal" data-confirm-modal hidden>
+      <div class="confirm-modal__backdrop" data-confirm-cancel></div>
+      <div class="confirm-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+        <h2 id="confirm-modal-title" data-confirm-modal-title>Delete item?</h2>
+        <p data-confirm-modal-message>Are you sure?</p>
+        <div class="form-actions">
+          <button type="button" class="button button-secondary" data-confirm-cancel>Cancel</button>
+          <button type="button" class="button button-danger" data-confirm-accept>Delete</button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+  <div class="confirm-modal" data-markdown-help-modal hidden>
+    <div class="confirm-modal__backdrop" data-markdown-help-close></div>
+    <div class="confirm-modal__dialog markdown-help-modal" role="dialog" aria-modal="true" aria-labelledby="markdown-help-title">
+      <h2 id="markdown-help-title">Markdown Help</h2>
+      <div class="markdown-help-modal__grid">
+        <div>
+          <p><strong>Headings</strong></p>
+          <pre><code># Main Heading
+## Section Heading
+### Smaller Heading</code></pre>
+        </div>
+        <div>
+          <p><strong>Emphasis</strong></p>
+          <pre><code>**bold**
+*italic*
+`inline code`</code></pre>
+        </div>
+        <div>
+          <p><strong>Lists</strong></p>
+          <pre><code>- First item
+- Second item
+- Third item</code></pre>
+        </div>
+        <div>
+          <p><strong>Links</strong></p>
+          <pre><code>[Link text](https://example.com)</code></pre>
+        </div>
+        <div>
+          <p><strong>Images</strong></p>
+          <pre><code>![alt text](url to image)</code></pre>
+        </div>
+        <div>
+          <p><strong>Quotes</strong></p>
+          <pre><code>&gt; Quoted text</code></pre>
+        </div>
+        <div>
+          <p><strong>Code Blocks</strong></p>
+          <pre><code>```js
+console.log("Hello");
+```</code></pre>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" class="button button-primary" data-markdown-help-close>Close</button>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+
+
+
+

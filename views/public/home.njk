@@ -1,0 +1,185 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="hero">
+    <div class="container hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow">{{ settings.hero_eyebrow }}</p>
+        <h1>{{ settings.hero_headline }}</h1>
+        <p class="hero-body">{{ settings.hero_supporting_text }}</p>
+        <div class="hero-actions">
+          <a href="{{ settings.hero_primary_link }}" class="button button-secondary">{{ settings.hero_primary_label }}</a>
+          <a href="{{ settings.hero_secondary_link }}" class="button button-primary" target="_blank" rel="noopener noreferrer">{{ settings.hero_secondary_label }}</a>
+          <a href="{{ settings.hero_text_link }}" class="text-link">{{ settings.hero_text_link_label }}</a>
+        </div>
+        <p class="hero-trust">{{ settings.hero_trust_line }}</p>
+      </div>
+      <div class="hero-visual" aria-hidden="true">
+        <img src="/assets/img/hero.png" alt="" class="hero-visual__image">
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--projects">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Featured Projects</h2>
+        <p>Selected tools, experiments, and creative builds.</p>
+      </div>
+      <div class="card-grid">
+        {% for project in featuredProjects %}
+          <article class="project-card project-card--{{ loop.index }}">
+            <div class="project-card__content">
+            <p class="card-tag">{{ project.project_type }}</p>
+            <h3>{{ project.title }}</h3>
+            <p>{{ project.summary }}</p>
+            {% if project.external_url or project.internal_url %}
+              <div class="project-card__actions">
+                {% if project.external_url %}
+                  <a href="{{ project.external_url }}" class="button button-secondary" target="_blank" rel="noopener noreferrer">
+                    Visit Site
+                  </a>
+                {% endif %}
+                {% if project.internal_url %}
+                  <a
+                    href="{{ project.internal_url }}"
+                    class="button button-secondary"
+                    data-project-modal-trigger
+                    data-project-modal-url="{{ project.internal_url }}"
+                    data-project-modal-title="{{ project.title }}"
+                  >
+                    Explore Project
+                  </a>
+                {% endif %}
+              </div>
+            {% endif %}
+            </div>
+            <div class="project-card__visual"{% if project.screenshot_count == 0 %} aria-hidden="true"{% endif %}>
+              <div class="project-art project-art--{{ loop.index }}">
+                {% if project.screenshot_count > 0 %}
+                  <div
+                    class="project-art__carousel"
+                    data-project-carousel
+                    data-carousel-images="{{ project.screenshot_urls_json | escape }}"
+                    data-carousel-count="{{ project.screenshot_count }}"
+                  >
+                    <img src="{{ project.screenshot_urls[0] }}" alt="{{ project.title }} screenshot" class="project-art__image is-active" data-carousel-image-current>
+                    <img src="{{ project.screenshot_urls[1] or project.screenshot_urls[0] }}" alt="" class="project-art__image" data-carousel-image-next>
+                    <button type="button" class="project-art__nav project-art__nav--prev" data-carousel-prev aria-label="Show previous {{ project.title }} screenshot">
+                      <span aria-hidden="true">&lt;</span>
+                    </button>
+                    <button type="button" class="project-art__nav project-art__nav--next" data-carousel-next aria-label="Show next {{ project.title }} screenshot">
+                      <span aria-hidden="true">&gt;</span>
+                    </button>
+                  </div>
+                {% elif loop.index == 1 %}
+                  <span class="project-art__screen"></span>
+                  <span class="project-art__knob project-art__knob--a"></span>
+                  <span class="project-art__knob project-art__knob--b"></span>
+                  <span class="project-art__pad-grid"></span>
+                {% elif loop.index == 2 %}
+                  <span class="project-art__keys"></span>
+                  <span class="project-art__bars"></span>
+                {% elif loop.index == 3 %}
+                  <span class="project-art__diamond project-art__diamond--one"></span>
+                  <span class="project-art__diamond project-art__diamond--two"></span>
+                  <span class="project-art__mesh"></span>
+                {% else %}
+                  <span class="project-art__tiles"></span>
+                  <span class="project-art__frame"></span>
+                {% endif %}
+              </div>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      <div class="project-ribbon" aria-hidden="true">
+        <span class="project-ribbon__line project-ribbon__line--left"></span>
+        <span class="project-ribbon__pulse"></span>
+        <span class="project-ribbon__line project-ribbon__line--right"></span>
+      </div>
+    </div>
+  </section>
+
+  <div class="lightbox-modal" data-lightbox-modal hidden>
+    <div class="lightbox-modal__backdrop" data-lightbox-close></div>
+    <div class="lightbox-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+      <button type="button" class="lightbox-modal__close" data-lightbox-close aria-label="Close image viewer">&times;</button>
+      <p id="lightbox-title" class="sr-only">Project image viewer</p>
+      <img src="" alt="" class="lightbox-modal__image" data-lightbox-image>
+      <button type="button" class="lightbox-modal__nav lightbox-modal__nav--prev" data-lightbox-prev aria-label="Show previous image">
+        <span aria-hidden="true">&lt;</span>
+      </button>
+      <button type="button" class="lightbox-modal__nav lightbox-modal__nav--next" data-lightbox-next aria-label="Show next image">
+        <span aria-hidden="true">&gt;</span>
+      </button>
+    </div>
+  </div>
+
+  <div class="project-modal" data-project-modal hidden>
+    <div class="project-modal__backdrop" data-project-modal-close></div>
+    <div class="project-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="project-modal-title">
+      <div class="project-modal__header">
+        <p id="project-modal-title" class="project-modal__title">Project preview</p>
+        <button type="button" class="project-modal__close" data-project-modal-close aria-label="Close project preview">&times;</button>
+      </div>
+      <div class="project-modal__frame-shell">
+        <iframe
+          src="about:blank"
+          title="Project preview"
+          class="project-modal__frame"
+          data-project-modal-frame
+          loading="lazy"
+        ></iframe>
+      </div>
+    </div>
+  </div>
+
+  <section class="section section--split">
+    <div class="container split-grid">
+      <div>
+        <div class="section-heading">
+          <h2>What I Do</h2>
+        </div>
+        <p class="section-copy">{{ settings.what_i_do_body }}</p>
+        <div class="pill-row">
+          {% for pill in skillPills %}
+            <span class="pill">{{ pill }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      <div>
+        <div class="section-heading">
+          <h2>Writing &amp; Notes</h2>
+          <p>Thoughts, process notes, and working ideas on software, creativity, design, and making things that matter.</p>
+        </div>
+        <div class="stack-list">
+          {% for post in featuredPosts %}
+            <article class="list-card">
+              <h3>{{ post.title }}</h3>
+              <p>{{ post.excerpt }}</p>
+              <a href="/blog/{{ post.slug }}" class="text-link">Read Post</a>
+            </article>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-heading">
+        <h2>Elsewhere</h2>
+        <p>You can also find my work and writing here.</p>
+      </div>
+      <div class="link-grid">
+        {% for link in settings.elsewhere_links_parsed %}
+          <a href="{{ link.url }}" class="elsewhere-link" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+
+

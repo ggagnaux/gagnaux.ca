@@ -1,0 +1,38 @@
+{
+    "name":  "gagnaux-ca",
+    "version":  "1.0.0",
+    "description":  "Personal website for Greg Gagnaux",
+    "main":  "server.js",
+    "scripts":  {
+                    "build":  "node scripts/build.js",
+                    "dev":  "nodemon server.js",
+                    "deploy":  "node scripts/deploy.js",
+                    "start":  "node server.js",
+                    "db:init":  "node scripts/init-db.js",
+                    "test":  "node --test --test-concurrency=1 tests",
+                    "test:watch":  "node --test --watch --test-concurrency=1 tests",
+                    "test:browser":  "playwright test",
+                    "test:all":  "npm test \u0026\u0026 npm run test:browser"
+                },
+    "dependencies":  {
+                         "bcrypt":  "^5.1.1",
+                         "better-sqlite3":  "^11.7.0",
+                         "cookie-session":  "^2.1.1",
+                         "dotenv":  "^17.3.1",
+                         "express":  "^4.21.2",
+                         "express-fileupload":  "^1.5.1",
+                         "express-session":  "^1.18.1",
+                         "luxon":  "^3.6.1",
+                         "marked":  "^15.0.7",
+                         "nunjucks":  "^3.2.4",
+                         "p5":  "^2.2.2",
+                         "sharp":  "^0.34.5",
+                         "slugify":  "^1.6.6"
+                     },
+    "devDependencies":  {
+                            "@playwright/test":  "^1.58.2",
+                            "nodemon":  "^3.1.10",
+                            "supertest":  "^7.2.2",
+                            "terser":  "^5.46.1"
+                        }
+}

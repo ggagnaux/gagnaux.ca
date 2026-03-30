@@ -1,0 +1,27 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="page-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Projects</p>
+      <h1>Selected tools, experiments, and creative builds.</h1>
+      <p class="hero-body">A curated mix of software, interfaces, visual systems, and exploratory work.</p>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="card-grid">
+        {% for project in projects %}
+          <article class="project-card">
+            <p class="card-tag">{{ project.project_type }}</p>
+            <h2>{{ project.title }}</h2>
+            <p>{{ project.summary }}</p>
+            <a href="{{ project.external_url or '/projects/' ~ project.slug }}" class="button button-secondary"{% if project.external_url %} target="_blank" rel="noopener noreferrer"{% endif %}>
+              {{ "Visit Site" if project.external_url else "Explore Project" }}
+            </a>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}

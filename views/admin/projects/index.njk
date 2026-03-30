@@ -1,0 +1,51 @@
+{% extends "admin-layout.njk" %}
+
+{% block content %}
+  <section class="admin-header">
+    <div class="panel-heading">
+      <div>
+        <p class="eyebrow">Admin / Projects</p>
+        <h1>Projects</h1>
+      </div>
+      <a href="/admin/projects/new" class="button button-primary">New Project</a>
+    </div>
+  </section>
+  <section class="admin-panel">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Type</th>
+            <th>Featured</th>
+          </tr>
+        </thead>
+        <tbody data-project-sortable>
+          {% for project in projects %}
+            <tr draggable="true" data-project-row data-project-id="{{ project.id }}">
+              <td>
+                <span class="admin-drag-handle" aria-hidden="true">::</span>
+                <a href="/admin/projects/{{ project.id }}/edit">{{ project.title }}</a>{% if project.is_featured %}<span class="admin-feature-badge">Featured</span>{% endif %}
+              </td>
+              <td>{{ project.project_type }}</td>
+              <td>
+                <form action="/admin/projects/{{ project.id }}/toggle-featured" method="post" class="inline-delete">
+                  {% if project.is_featured %}
+                    <button type="submit" class="button button-secondary button-compact">Unfeature</button>
+                  {% elif project.canToggleFeaturedOn %}
+                    <button type="submit" class="button button-primary button-compact">Feature</button>
+                  {% else %}
+                    <button type="submit" class="button button-secondary button-compact" disabled>Limit Reached</button>
+                  {% endif %}
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}
+
+
+

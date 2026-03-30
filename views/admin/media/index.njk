@@ -1,0 +1,179 @@
+{% extends "admin-layout.njk" %}
+
+{% block content %}
+  <section class="admin-header">
+    <p class="eyebrow">Admin / Media</p>
+    <h1>Media</h1>
+  </section>
+  <section class="admin-panel">
+    <div class="admin-settings-tabs admin-project-tabs admin-media-tabs" data-media-tabs>
+      <div class="admin-settings-tabs__list admin-project-tabs__list admin-media-tabs__list" role="tablist" aria-label="Media sections">
+        <button
+          type="button"
+          class="admin-settings-tabs__trigger admin-project-tabs__trigger admin-media-tabs__trigger{% if (activeMediaTab or 'existing') == 'existing' %} is-active{% endif %}"
+          data-media-tab-trigger
+          data-media-tab-target="existing"
+          role="tab"
+          aria-selected="{{ 'true' if (activeMediaTab or 'existing') == 'existing' else 'false' }}"
+        >
+          Existing
+        </button>
+        <button
+          type="button"
+          class="admin-settings-tabs__trigger admin-project-tabs__trigger admin-media-tabs__trigger{% if (activeMediaTab or 'existing') == 'new' %} is-active{% endif %}"
+          data-media-tab-trigger
+          data-media-tab-target="new"
+          role="tab"
+          aria-selected="{{ 'true' if (activeMediaTab or 'existing') == 'new' else 'false' }}"
+        >
+          New
+        </button>
+      </div>
+
+      <section class="admin-settings-tabs__panel admin-project-tabs__panel admin-project-tabs__panel--images admin-media-tabs__panel{% if (activeMediaTab or 'existing') == 'existing' %} is-active{% endif %}" data-media-tab-panel data-media-tab-panel-id="existing">
+        {% if mediaItems and mediaItems.length %}
+          <form action="/admin/media/delete-selected" method="post" data-media-selection-form data-confirm-delete-form data-confirm-title="Remove Selected Media?" data-confirm-message="Selected media will be permanently deleted. If <strong>Allow deleting in-use media</strong> is checked, referenced media will be deleted too and any structured cover or thumbnail references will be cleared.">
+            <div class="admin-media-view-switch">
+              <span class="admin-media-view-switch__label">View</span>
+              <div class="admin-media-view-switch__controls" role="group" aria-label="Media library view">
+                <button type="button" class="admin-media-view-switch__button is-active" data-media-view-trigger data-media-view-target="grid" aria-pressed="true">Thumbnails</button>
+                <button type="button" class="admin-media-view-switch__button" data-media-view-trigger data-media-view-target="table" aria-pressed="false">Details</button>
+              </div>
+            </div>
+
+            <div class="admin-media-library-view is-active" data-media-view-panel data-media-view-panel-id="grid">
+              <div class="admin-media-library-grid">
+                {% for item in mediaItems %}
+                  <article class="admin-media-library-card{% if item.isReferenced %} is-referenced{% endif %}">
+                    <div class="admin-media-library-card__topline">
+                      <strong title="{{ item.original_name }}">{{ item.original_name | truncate(15, true, '...') if item.original_name else '' }}</strong>
+                      <label class="admin-project-screenshot-card__selector" aria-label="Select {{ item.original_name }}">
+                        <input type="checkbox" name="mediaIds" value="{{ item.id }}" data-media-select data-media-item-id="{{ item.id }}" data-media-view-input="grid">
+                        <span></span>
+                      </label>
+                    </div>
+                    <img src="/uploads/{{ item.filename }}" alt="{{ item.alt_text or item.original_name }}" class="admin-project-screenshot-card__image">
+                    <div class="admin-media-library-card__meta">
+                      <span class="muted-text">{{ item.mime_type }}</span>
+                      {% if item.alt_text %}
+                        <span class="muted-text">Alt: {{ item.alt_text }}</span>
+                      {% endif %}
+                      {% if item.isReferenced %}
+                        <div class="admin-media-library-card__references">
+                          <span class="admin-media-status admin-media-status--referenced">In Use</span>
+                          {% for reference in item.references %}
+                            <span class="muted-text">{{ reference }}</span>
+                          {% endfor %}
+                        </div>
+                      {% else %}
+                        <span class="admin-media-status admin-media-status--available">Available</span>
+                      {% endif %}
+                    </div>
+                  </article>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="admin-media-library-view" data-media-view-panel data-media-view-panel-id="table" hidden>
+              <div class="table-wrap admin-media-table-wrap">
+                <table class="admin-media-table">
+                  <thead>
+                    <tr>
+                      <th>Thumbnail</th>
+                      <th>Name</th>
+                      <th>Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for item in mediaItems %}
+                      <tr class="admin-media-library-row{% if item.isReferenced %} is-referenced{% endif %}">
+                        <td class="admin-media-library-row__thumbnail" data-label="Thumbnail">
+                          <img src="/uploads/{{ item.filename }}" alt="{{ item.alt_text or item.original_name }}" class="admin-project-screenshot-card__image">
+                        </td>
+                        <td class="admin-media-library-row__name" data-label="Name">
+                          <div class="admin-media-library-row__name-wrap">
+                            <label class="admin-project-screenshot-card__selector" aria-label="Select {{ item.original_name }}">
+                              <input type="checkbox" name="mediaIds" value="{{ item.id }}" data-media-select data-media-item-id="{{ item.id }}" data-media-view-input="table" disabled>
+                              <span></span>
+                            </label>
+                            <div class="admin-media-library-row__name-text">
+                              <strong title="{{ item.original_name }}">{{ item.original_name }}</strong>
+                              <span class="muted-text">{{ item.mime_type }}</span>
+                              {% if item.alt_text %}
+                                <span class="muted-text">Alt: {{ item.alt_text }}</span>
+                              {% endif %}
+                            </div>
+                          </div>
+                        </td>
+                        <td class="admin-media-library-row__status" data-label="Status">
+                          {% if item.isReferenced %}
+                            <span class="admin-media-status admin-media-status--referenced">In Use</span>
+                            <div class="admin-media-library-card__references">
+                              {% for reference in item.references %}
+                                <span class="muted-text">{{ reference }}</span>
+                              {% endfor %}
+                            </div>
+                          {% else %}
+                            <span class="admin-media-status admin-media-status--available">Available</span>
+                          {% endif %}
+                        </td>
+                      </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="form-actions admin-project-screenshot-bulk-actions admin-media-bulk-actions" data-media-bulk-actions hidden>
+              <label class="admin-media-bulk-option" aria-label="Allow deleting in-use media">
+                <input type="checkbox" name="allow_in_use_delete" value="1">
+                <span class="admin-media-bulk-option__control"></span>
+                <span class="admin-media-bulk-option__label">Allow deleting in-use media</span>
+              </label>
+              <button type="submit" class="button button-danger">Remove Selected</button>
+            </div>
+          </form>
+        {% else %}
+          <p class="muted-text">No media items uploaded yet.</p>
+        {% endif %}
+      </section>
+
+      <section class="admin-settings-tabs__panel admin-project-tabs__panel admin-project-tabs__panel--images admin-media-tabs__panel{% if (activeMediaTab or 'existing') == 'new' %} is-active{% endif %}" data-media-tab-panel data-media-tab-panel-id="new">
+        <form action="/admin/media/upload" method="post" enctype="multipart/form-data" class="admin-form admin-media-upload-form">
+          <label class="admin-media-upload-control">
+            <span class="admin-media-upload-control__label">Upload file</span>
+            <span class="admin-media-upload-control__hint">Choose an image to add to the media library.</span>
+            <input class="admin-media-upload-control__input" type="file" name="media" accept="image/*" required>
+          </label>
+          <label class="admin-floating-field">
+            <input type="text" name="alt_text" placeholder=" " aria-label="Alt text">
+            <span class="admin-floating-field__label">Alt text</span>
+          </label>
+          <div class="form-actions">
+            <button type="submit" class="button button-primary">Upload</button>
+          </div>
+        </form>
+      </section>
+    </div>
+  </section>
+  {% if mediaItems and mediaItems.length %}
+    <div class="confirm-modal" data-confirm-modal hidden>
+      <div class="confirm-modal__backdrop" data-confirm-cancel></div>
+      <div class="confirm-modal__dialog" role="dialog" aria-modal="true" aria-labelledby="confirm-modal-title">
+        <h2 id="confirm-modal-title" data-confirm-modal-title>Delete item?</h2>
+        <p data-confirm-modal-message>Are you sure?</p>
+        <div class="form-actions">
+          <button type="button" class="button button-secondary" data-confirm-cancel>Cancel</button>
+          <button type="button" class="button button-danger" data-confirm-accept>Delete</button>
+        </div>
+      </div>
+    </div>
+  {% endif %}
+{% endblock %}
+
+
+
+
+
+
+

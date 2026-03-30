@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pageTitle }} | Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+  </head>
+  <body class="admin-shell">
+    {% if currentUser %}
+      <aside class="admin-sidebar" data-admin-sidebar>
+        <button type="button" class="admin-sidebar__toggle" data-admin-sidebar-toggle aria-label="Hide admin menu">
+          <span aria-hidden="true">‹</span>
+        </button>
+        <a href="/admin" class="admin-brand">GG / Admin</a>
+        <p class="admin-brand__version">V{{ appVersion or "0.0.0" }}</p>
+        <nav class="admin-nav">
+          <a href="/admin" class="{{ 'is-active' if currentPath == '/admin' else '' }}">Dashboard</a>
+          <a href="/admin/posts" class="{{ 'is-active' if '/admin/posts' in currentPath else '' }}">Posts</a>
+          <a href="/admin/projects" class="{{ 'is-active' if '/admin/projects' in currentPath else '' }}">Projects</a>
+          <a href="/admin/security" class="{{ 'is-active' if '/admin/security' in currentPath else '' }}">Security</a>
+          <a href="/admin/settings" class="{{ 'is-active' if '/admin/settings' in currentPath else '' }}">Settings</a>
+          <a href="/admin/media" class="{{ 'is-active' if '/admin/media' in currentPath else '' }}">Media</a>
+          <a href="/" target="_blank" rel="noopener noreferrer">Public Site</a>
+        </nav>
+        <form action="/admin/logout" method="post">
+          <button type="submit" class="button button-secondary button-full">Sign Out</button>
+        </form>
+      </aside>
+      <button type="button" class="admin-sidebar-tab" data-admin-sidebar-tab aria-label="Show admin menu">
+        <span aria-hidden="true">&gt;</span>
+      </button>
+    {% endif %}
+    <main class="admin-main {{ 'admin-main--full' if not currentUser else '' }}">
+      {% if flashMessage %}
+        <div class="flash-message">{{ flashMessage }}</div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+    {% include "partials/theme-switcher-float.njk" %}
+    <button type="button" class="scroll-top-button" data-scroll-top-button hidden aria-label="Scroll back to top">
+      <span aria-hidden="true">↑</span>
+    </button>
+    {% if currentPath == '/admin/settings' %}
+      <script src="/vendor/p5/p5.min.js" defer></script>
+      <script src="/assets/js/logo-sketch.js" defer></script>
+    {% endif %}
+    <script src="/assets/js/site.js" defer></script>
+  </body>
+</html>
+

@@ -1,0 +1,12 @@
+node_modules/
+build/
+db/site.sqlite
+public/uploads/*
+!public/uploads/.gitkeep
+.env
+deploy/
+test-results/
+playwright-report/
+browser-tests/.auth/
+db/*.sqlite-shm
+db/*.sqlite-wal

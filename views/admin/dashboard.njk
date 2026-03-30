@@ -1,0 +1,41 @@
+{% extends "admin-layout.njk" %}
+
+{% block content %}
+  <section class="admin-header">
+    <p class="eyebrow">Dashboard</p>
+    <h1>Dashboard</h1>
+  </section>
+  <section class="stats-grid stats-grid--admin">
+    <article class="admin-panel"><strong>{{ stats.posts }}</strong><span>Total Posts</span></article>
+    <article class="admin-panel"><strong>{{ stats.publishedPosts }}</strong><span>Published Posts</span></article>
+    <article class="admin-panel"><strong>{{ stats.draftPosts }}</strong><span>Draft Posts</span></article>
+    <article class="admin-panel"><strong>{{ stats.projects }}</strong><span>Projects</span></article>
+  </section>
+  <section class="admin-panel">
+    <div class="panel-heading">
+      <h2>Recent Posts</h2>
+      <a href="/admin/posts/new" class="button button-primary">New Post</a>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Status</th>
+            <th>Updated</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for post in stats.recentPosts %}
+            <tr>
+              <td><a href="/admin/posts/{{ post.id }}/edit">{{ post.title }}</a>{% if post.is_featured %}<span class="admin-feature-badge">Featured</span>{% endif %}</td>
+              <td>{{ post.status }}</td>
+              <td>{{ post.updated_at | date }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+{% endblock %}
+

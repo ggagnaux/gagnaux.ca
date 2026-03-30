@@ -1,0 +1,24 @@
+{% extends "admin-layout.njk" %}
+
+{% block content %}
+  <section class="admin-login">
+    <div class="admin-panel admin-panel--narrow">
+      <p class="eyebrow">Admin</p>
+      <h1>Sign in</h1>
+      {% if errorMessage %}
+        <p class="error-text">{{ errorMessage }}</p>
+      {% endif %}
+      <form action="/admin/login" method="post" class="admin-form">
+        <label>
+          Username
+          <input type="text" name="username" required>
+        </label>
+        <label>
+          Password
+          <input type="password" name="password" required>
+        </label>
+        <button type="submit" class="button button-primary">Sign In</button>
+      </form>
+    </div>
+  </section>
+{% endblock %}

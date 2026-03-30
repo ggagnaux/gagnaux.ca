@@ -1,0 +1,23 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="page-hero">
+    <div class="container narrow">
+      <p class="eyebrow">Blog</p>
+      <h1>Thoughts, process notes, and working ideas.</h1>
+      <p class="hero-body">Writing on software, creativity, design, and making things that matter.</p>
+    </div>
+  </section>
+  <section class="section">
+      <div class="container stack-list">
+        {% for post in posts %}
+          <article class="list-card">
+          <p class="card-tag">{{ post.published_at | date }}</p>
+          <h2>{{ post.title }}</h2>
+          <p>{{ post.excerpt }}</p>
+          <a href="/blog/{{ post.slug }}" class="text-link">Read Post</a>
+          </article>
+        {% endfor %}
+      </div>
+  </section>
+{% endblock %}

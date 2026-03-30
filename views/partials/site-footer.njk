@@ -1,0 +1,10 @@
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <div class="site-footer__copy">
+      <p>{{ siteSettings.footer_copy or "Copyright 2026 Greg Gagnaux. All rights reserved." }} [V{{ appVersion or "0.0.0" }}]</p>
+      <p>{{ siteSettings.footer_tagline or "Built with curiosity, code, and experimentation." }}</p>
+    </div>
+    {% include "partials/theme-switcher-footer.njk" %}
+  </div>
+</footer>
+

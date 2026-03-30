@@ -1,0 +1,19 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="page-hero">
+    <div class="container page-hero__content page-hero__content--detail">
+      <p class="eyebrow">{{ project.project_type }}</p>
+      <h1>{{ project.title }}</h1>
+      <p class="hero-body">{{ project.summary }}</p>
+      {% if project.external_url %}
+        <a href="{{ project.external_url }}" class="button button-primary" target="_blank" rel="noopener noreferrer">Visit Project</a>
+      {% endif %}
+    </div>
+  </section>
+  <section class="section">
+    <div class="container prose prose--reading" data-prose>
+      {{ project.description_html | safe }}
+    </div>
+  </section>
+{% endblock %}

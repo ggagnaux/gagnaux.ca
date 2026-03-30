@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blade Console</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <button
+    class="config-tab"
+    id="configTab"
+    type="button"
+    aria-controls="configDrawer"
+    aria-expanded="false"
+  >
+    Config
+  </button>
+
+  <aside class="config-drawer" id="configDrawer" aria-hidden="true">
+    <div class="config-drawer__header">
+      <div>
+        <p class="eyebrow">Auxiliary Controls</p>
+        <h2>Console Config</h2>
+      </div>
+      <button class="config-close" id="configClose" type="button" aria-label="Close configuration panel">
+        X
+      </button>
+    </div>
+
+    <div class="config-drawer__body">
+      <label class="config-field">
+        <span>Signal Profile</span>
+        <select>
+          <option>Nominal</option>
+          <option>Elevated</option>
+          <option>Critical</option>
+        </select>
+      </label>
+
+      <label class="config-field">
+        <span>Trace Gain</span>
+        <input type="range" min="0" max="100" value="62">
+      </label>
+
+      <label class="config-field">
+        <span>Theme Accent</span>
+        <input id="themeColorPicker" type="color" value="#ff3a3a">
+      </label>
+
+      <label class="config-field">
+        <span>Glyph Set</span>
+        <input type="text" value="CRYPTIC-ALPHA">
+      </label>
+
+      <label class="config-field">
+        <span>Radar Lock</span>
+        <input type="text" value="SECTOR-07">
+      </label>
+
+      <label class="config-field config-field--checkbox">
+        <input type="checkbox" checked>
+        <span>Enable anomaly sweep</span>
+      </label>
+
+      <label class="config-field config-field--checkbox">
+        <input type="checkbox">
+        <span>Broadcast to uplink mirror</span>
+      </label>
+
+      <button class="config-action" id="addFunctionPanel" type="button">
+        Add Function Panel
+      </button>
+
+      <button class="config-action" id="addAsteroidsPanel" type="button">
+        Add Asteroids Panel
+      </button>
+
+      <button class="config-action" id="addPacmanPanel" type="button">
+        Add Pacman Panel
+      </button>
+    </div>
+  </aside>
+
+  <div class="config-backdrop" id="configBackdrop" hidden></div>
+
+  <div class="console-shell">
+    <header class="console-header">
+      <div>
+        <p class="eyebrow">System Overlay</p>
+        <h1>SYSTEM STATUS</h1>
+      </div>
+      <div class="status-block">
+        <span>LINK: ACTIVE</span>
+        <span>SCAN: CONTINUOUS</span>
+      </div>
+    </header>
+
+    <main class="dashboard" id="dashboard">
+      <section class="panel panel-symbols" data-panel="symbols" data-visual="symbols">
+        <div class="panel-header">
+          <span>Glyph Stream</span>
+          <div class="panel-actions">
+            <span class="panel-tag">A1</span>
+            <button class="panel-close" type="button" aria-label="Close panel">X</button>
+            <button class="panel-toggle" type="button">Undock</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <canvas id="symbolsCanvas"></canvas>
+        </div>
+        <div class="panel-resize-handle" aria-hidden="true"></div>
+      </section>
+
+      <section class="panel panel-graph" data-panel="graph" data-visual="graph">
+        <div class="panel-header">
+          <span>Function Trace</span>
+          <div class="panel-actions">
+            <span class="panel-tag">B2</span>
+            <button class="panel-close" type="button" aria-label="Close panel">X</button>
+            <button class="panel-toggle" type="button">Undock</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <canvas id="graphCanvas"></canvas>
+        </div>
+        <div class="panel-resize-handle" aria-hidden="true"></div>
+      </section>
+
+      <section class="panel panel-radar" data-panel="radar" data-visual="radar">
+        <div class="panel-header">
+          <span>Radar Sweep</span>
+          <div class="panel-actions">
+            <span class="panel-tag">C3</span>
+            <button class="panel-close" type="button" aria-label="Close panel">X</button>
+            <button class="panel-toggle" type="button">Undock</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <canvas id="radarCanvas"></canvas>
+        </div>
+        <div class="panel-resize-handle" aria-hidden="true"></div>
+      </section>
+
+      <section class="panel panel-numbers" data-panel="numbers" data-visual="numbers">
+        <div class="panel-header">
+          <span>Numeric Feed</span>
+          <div class="panel-actions">
+            <span class="panel-tag">D4</span>
+            <button class="panel-close" type="button" aria-label="Close panel">X</button>
+            <button class="panel-toggle" type="button">Undock</button>
+          </div>
+        </div>
+        <div class="panel-body">
+          <canvas id="numbersCanvas"></canvas>
+        </div>
+        <div class="panel-resize-handle" aria-hidden="true"></div>
+      </section>
+
+      <div class="splitter splitter-vertical" id="verticalSplitter" aria-label="Resize columns" role="separator"></div>
+      <div class="splitter splitter-horizontal" id="horizontalSplitter" aria-label="Resize rows" role="separator"></div>
+      <div class="splitter splitter-cross" id="crossSplitter" aria-hidden="true"></div>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

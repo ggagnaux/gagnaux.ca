@@ -1,0 +1,14 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="page-hero">
+    <div class="container narrow">
+      <p class="eyebrow">500</p>
+      <h1>Something went wrong.</h1>
+      <p class="hero-body">An unexpected server error occurred.</p>
+      {% if errorMessage %}
+        <p class="muted-text">{{ errorMessage }}</p>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

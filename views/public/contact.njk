@@ -1,0 +1,12 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="page-hero">
+    <div class="container page-hero__content page-hero__content--detail">
+      <p class="eyebrow">Contact</p>
+      <h1>Let’s talk.</h1>
+      <p class="hero-body">{{ siteSettings.contact_body }}</p>
+      <p><a href="mailto:{{ siteSettings.contact_email }}" class="button button-primary">{{ siteSettings.contact_email }}</a></p>
+    </div>
+  </section>
+{% endblock %}

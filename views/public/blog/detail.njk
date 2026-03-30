@@ -1,0 +1,17 @@
+{% extends "layout.njk" %}
+
+{% block content %}
+  <section class="page-hero">
+    <div class="container page-hero__content page-hero__content--detail">
+      <p class="eyebrow">Blog Post</p>
+      <h1>{{ post.title }}</h1>
+      <p class="hero-body">{{ post.excerpt }}</p>
+      <p class="card-tag">Published {{ post.published_at | date }}</p>
+    </div>
+  </section>
+  <section class="section">
+    <article class="container prose prose--reading" data-prose>
+      {{ post.body_html | safe }}
+    </article>
+  </section>
+{% endblock %}

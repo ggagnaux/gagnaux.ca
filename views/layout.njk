@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pageTitle }} | {{ siteSettings.site_title or "Greg Gagnaux" }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/site.css">
+  </head>
+  <body class="site-shell">
+    {% include "partials/site-header.njk" %}
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+    {% include "partials/site-footer.njk" %}
+    <button type="button" class="scroll-top-button" data-scroll-top-button hidden aria-label="Scroll back to top">
+      <span aria-hidden="true">↑</span>
+    </button>
+    {% if siteSettings.logo_mode == "animated" %}
+      <script src="/vendor/p5/p5.min.js" defer></script>
+      <script src="/assets/js/logo-sketch.js" defer></script>
+    {% endif %}
+    <script src="/assets/js/site.js" defer></script>
+  </body>
+</html>

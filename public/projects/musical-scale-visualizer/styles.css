@@ -1,0 +1,333 @@
+:root {
+  --bg: #f5f4ef;
+  --panel: #fffef9;
+  --ink: #1d1d1d;
+  --muted: #5a5a5a;
+  --accent: #f4a100;
+  --accent-dark: #b87000;
+  --key-white: #fff;
+  --key-white-off: #ece8de;
+  --key-black: #2b2b2b;
+  --key-black-off: #515151;
+  --border: #d5d0c4;
+  --field-bg: #ffffff;
+  --field-border: #bbbbbb;
+  --gradient-a: #fff9dd;
+  --gradient-b: #ece5d7;
+}
+
+:root[data-theme="dark"] {
+  --bg: #12131a;
+  --panel: #1b1d25;
+  --ink: #eceef5;
+  --muted: #aeb4c4;
+  --accent: #f0a93d;
+  --accent-dark: #b87715;
+  --key-white: #dedde3;
+  --key-white-off: #b6b5be;
+  --key-black: #121218;
+  --key-black-off: #2e2f39;
+  --border: #303445;
+  --field-bg: #202330;
+  --field-border: #464d63;
+  --gradient-a: #1a1f2f;
+  --gradient-b: #0f1119;
+}
+
+:root[data-theme="studio"] {
+  --bg: #142425;
+  --panel: #1d3132;
+  --ink: #eff9f2;
+  --muted: #a9c8bb;
+  --accent: #f5b14c;
+  --accent-dark: #b5771d;
+  --key-white: #ebf2ec;
+  --key-white-off: #b9c7bc;
+  --key-black: #0e1b1b;
+  --key-black-off: #2f4643;
+  --border: #395a56;
+  --field-bg: #264141;
+  --field-border: #4f7670;
+  --gradient-a: #315e5d;
+  --gradient-b: #102122;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at 5% 10%, var(--gradient-a) 0%, transparent 35%),
+    radial-gradient(circle at 95% 0%, var(--gradient-b) 0%, transparent 33%),
+    var(--bg);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 2.5rem;
+}
+
+.header-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+}
+
+.theme-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 140px;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.theme-control select {
+  margin-top: 0.2rem;
+}
+
+.header p {
+  margin: 0.4rem 0 1.2rem;
+  color: var(--muted);
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 0.8rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.9rem;
+}
+
+label,
+legend {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+select {
+  margin-top: 0.35rem;
+  width: 100%;
+  padding: 0.55rem;
+  border-radius: 8px;
+  border: 1px solid var(--field-border);
+  font-size: 0.96rem;
+  background: var(--field-bg);
+  color: var(--ink);
+}
+
+.toggles {
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  display: grid;
+  gap: 0.35rem;
+  padding: 0.6rem;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+}
+
+.actions-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+#play-scale-btn {
+  margin-top: 0.35rem;
+  width: 100%;
+  padding: 0.62rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--accent-dark) 70%, #000 30%);
+  background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 80ms ease, filter 120ms ease;
+}
+
+#play-scale-btn:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.04);
+}
+
+#play-scale-btn:active {
+  transform: translateY(1px);
+}
+
+#play-scale-btn:disabled {
+  opacity: 0.65;
+  cursor: default;
+  transform: none;
+  filter: none;
+}
+
+.toggles label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 500;
+}
+
+.scale-meta {
+  margin: 0.8rem 0;
+  color: var(--muted);
+}
+
+.scale-meta p {
+  margin: 0.3rem 0;
+}
+
+.piano-roll {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.5rem;
+  background: color-mix(in srgb, var(--panel) 55%, #7e7664 45%);
+  overflow-x: auto;
+}
+
+.keyboard-track {
+  --white-key-width: 48px;
+  --black-key-width: 30px;
+  position: relative;
+  min-width: 100%;
+  width: calc(var(--white-key-width) * var(--key-span, 15));
+  height: 190px;
+}
+
+.key {
+  position: absolute;
+  top: 0;
+  width: var(--white-key-width);
+  height: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.25);
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  padding: 0.35rem 0.2rem;
+  transition: transform 80ms ease, box-shadow 120ms ease, filter 120ms ease;
+  user-select: none;
+}
+
+.key:hover {
+  transform: translateY(-1px);
+}
+
+.key:disabled {
+  cursor: default;
+}
+
+.key:disabled:hover {
+  transform: none;
+}
+
+.key:active,
+.key.playing {
+  transform: translateY(1px);
+  box-shadow: inset 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 14px rgba(255, 190, 70, 0.85);
+  filter: brightness(1.18) saturate(1.25);
+  z-index: 4;
+}
+
+.key.white.playing {
+  background: linear-gradient(180deg, #ffe8b7 0%, #ffbd3f 100%);
+}
+
+.key.black.playing {
+  background: linear-gradient(180deg, #ffc86d 0%, #d07e12 100%);
+}
+
+.key.white {
+  z-index: 1;
+}
+
+.key.white.out {
+  background: var(--key-white-off);
+}
+
+.key.white.in {
+  background: linear-gradient(180deg, #ffe3a8 0%, #ffc756 100%);
+}
+
+.key.black {
+  width: var(--black-key-width);
+  height: 62%;
+  z-index: 2;
+  border-radius: 0 0 5px 5px;
+}
+
+.key.black.out {
+  background: var(--key-black-off);
+  color: #f8f8f8;
+}
+
+.key.black.in {
+  background: linear-gradient(180deg, #ffb347 0%, var(--accent-dark) 100%);
+  color: #fff;
+}
+
+.key-note,
+.key-degree {
+  font-size: 0.78rem;
+  line-height: 1.2;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.22);
+}
+
+.key.white .key-note,
+.key.white .key-degree {
+  text-shadow: none;
+}
+
+.key.black .key-note {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  line-height: 1;
+  letter-spacing: 0.03em;
+}
+
+.hint {
+  margin-top: 0.55rem;
+  font-size: 0.88rem;
+  color: var(--muted);
+}
+
+@media (max-width: 680px) {
+  .header-top {
+    align-items: stretch;
+  }
+
+  .theme-control {
+    align-items: stretch;
+  }
+
+  .keyboard-track {
+    --white-key-width: 38px;
+    --black-key-width: 24px;
+    height: 150px;
+  }
+
+  .piano-roll {
+    padding: 0.4rem;
+  }
+}

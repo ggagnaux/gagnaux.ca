@@ -1,0 +1,648 @@
+{% extends "admin-layout.njk" %}
+
+{% block content %}
+  <section class="admin-header">
+    <p class="eyebrow">Admin / Settings</p>
+    <h1>Settings</h1>
+  </section>
+  <section class="admin-panel">
+    <form action="/admin/settings" method="post" class="admin-form admin-form--wide">
+      <input type="hidden" name="active_settings_tab" value="{{ activeSettingsTab or 'details' }}" data-active-settings-tab-input>
+      <div class="admin-settings-tabs" data-settings-tabs>
+        <div class="admin-settings-tabs__list" role="tablist" aria-label="Settings sections">
+          <button
+            type="button"
+            class="admin-settings-tabs__trigger{% if (activeSettingsTab or 'details') == 'details' %} is-active{% endif %}"
+            data-settings-tab-trigger
+            data-settings-tab-target="details"
+            role="tab"
+            aria-selected="{% if (activeSettingsTab or 'details') == 'details' %}true{% else %}false{% endif %}"
+            aria-controls="settings-tab-details"
+            id="settings-tab-trigger-details"
+            tabindex="{% if (activeSettingsTab or 'details') == 'details' %}0{% else %}-1{% endif %}"
+          >
+            Details
+          </button>
+          <button
+            type="button"
+            class="admin-settings-tabs__trigger{% if (activeSettingsTab or 'details') == 'contact-links' %} is-active{% endif %}"
+            data-settings-tab-trigger
+            data-settings-tab-target="contact-links"
+            role="tab"
+            aria-selected="{% if (activeSettingsTab or 'details') == 'contact-links' %}true{% else %}false{% endif %}"
+            aria-controls="settings-tab-contact-links"
+            id="settings-tab-trigger-contact-links"
+            tabindex="{% if (activeSettingsTab or 'details') == 'contact-links' %}0{% else %}-1{% endif %}"
+          >
+            Contact and Links
+          </button>
+          <button
+            type="button"
+            class="admin-settings-tabs__trigger{% if (activeSettingsTab or 'details') == 'header-logo' %} is-active{% endif %}"
+            data-settings-tab-trigger
+            data-settings-tab-target="header-logo"
+            role="tab"
+            aria-selected="{% if (activeSettingsTab or 'details') == 'header-logo' %}true{% else %}false{% endif %}"
+            aria-controls="settings-tab-header-logo"
+            id="settings-tab-trigger-header-logo"
+            tabindex="{% if (activeSettingsTab or 'details') == 'header-logo' %}0{% else %}-1{% endif %}"
+          >
+            Header Logo
+          </button>
+          <button
+            type="button"
+            class="admin-settings-tabs__trigger{% if (activeSettingsTab or 'details') == 'distribution' %} is-active{% endif %}"
+            data-settings-tab-trigger
+            data-settings-tab-target="distribution"
+            role="tab"
+            aria-selected="{% if (activeSettingsTab or 'details') == 'distribution' %}true{% else %}false{% endif %}"
+            aria-controls="settings-tab-distribution"
+            id="settings-tab-trigger-distribution"
+            tabindex="{% if (activeSettingsTab or 'details') == 'distribution' %}0{% else %}-1{% endif %}"
+          >
+            Distribution
+          </button>
+        </div>
+        <div
+          class="admin-settings-tabs__panel{% if (activeSettingsTab or 'details') == 'details' %} is-active{% endif %}"
+          data-settings-tab-panel
+          data-settings-tab-panel-id="details"
+          role="tabpanel"
+          id="settings-tab-details"
+          aria-labelledby="settings-tab-trigger-details"
+        >
+          <label class="admin-floating-field">
+            <input type="text" name="site_title" value="{{ settings.site_title }}" placeholder=" " aria-label="Site Title">
+            <span class="admin-floating-field__label">Site Title</span>
+          </label>
+          <label class="admin-floating-field">
+            <input type="text" name="site_descriptor" value="{{ settings.site_descriptor }}" placeholder=" " aria-label="Site Descriptor">
+            <span class="admin-floating-field__label">Site Descriptor</span>
+          </label>
+          <label class="admin-floating-field">
+            <input type="text" name="hero_headline" value="{{ settings.hero_headline }}" placeholder=" " aria-label="Hero Headline">
+            <span class="admin-floating-field__label">Hero Headline</span>
+          </label>
+          <label class="admin-floating-field admin-floating-field--textarea">
+            <textarea name="hero_supporting_text" rows="4" placeholder=" " aria-label="Hero Supporting Text">{{ settings.hero_supporting_text }}</textarea>
+            <span class="admin-floating-field__label">Hero Supporting Text</span>
+          </label>
+          <div class="inline-fields">
+            <label class="admin-floating-field">
+              <input type="text" name="hero_primary_label" value="{{ settings.hero_primary_label }}" placeholder=" " aria-label="Primary CTA Label">
+              <span class="admin-floating-field__label">Primary CTA Label</span>
+            </label>
+            <label class="admin-floating-field">
+              <input type="text" name="hero_primary_link" value="{{ settings.hero_primary_link }}" placeholder=" " aria-label="Primary CTA Link">
+              <span class="admin-floating-field__label">Primary CTA Link</span>
+            </label>
+          </div>
+          <div class="inline-fields">
+            <label class="admin-floating-field">
+              <input type="text" name="hero_secondary_label" value="{{ settings.hero_secondary_label }}" placeholder=" " aria-label="Secondary CTA Label">
+              <span class="admin-floating-field__label">Secondary CTA Label</span>
+            </label>
+            <label class="admin-floating-field">
+              <input type="text" name="hero_secondary_link" value="{{ settings.hero_secondary_link }}" placeholder=" " aria-label="Secondary CTA Link">
+              <span class="admin-floating-field__label">Secondary CTA Link</span>
+            </label>
+          </div>
+          <div class="inline-fields">
+            <label class="admin-floating-field">
+              <input type="text" name="hero_text_link_label" value="{{ settings.hero_text_link_label }}" placeholder=" " aria-label="Text Link Label">
+              <span class="admin-floating-field__label">Text Link Label</span>
+            </label>
+            <label class="admin-floating-field">
+              <input type="text" name="hero_text_link" value="{{ settings.hero_text_link }}" placeholder=" " aria-label="Text Link URL">
+              <span class="admin-floating-field__label">Text Link URL</span>
+            </label>
+          </div>
+          <label class="admin-floating-field">
+            <input type="text" name="about_intro" value="{{ settings.about_intro }}" placeholder=" " aria-label="About Intro">
+            <span class="admin-floating-field__label">About Intro</span>
+          </label>
+          <label class="admin-floating-field admin-floating-field--textarea">
+            <textarea name="about_body" rows="4" placeholder=" " aria-label="About Body">{{ settings.about_body }}</textarea>
+            <span class="admin-floating-field__label">About Body</span>
+          </label>
+          <label class="admin-floating-field admin-floating-field--textarea">
+            <textarea name="contact_body" rows="3" placeholder=" " aria-label="Contact Body">{{ settings.contact_body }}</textarea>
+            <span class="admin-floating-field__label">Contact Body</span>
+          </label>
+          <label class="admin-floating-field">
+            <input type="text" name="footer_copy" value="{{ settings.footer_copy }}" placeholder=" " aria-label="Footer Copy">
+            <span class="admin-floating-field__label">Footer Copy</span>
+          </label>
+          <label class="admin-floating-field">
+            <input type="text" name="footer_tagline" value="{{ settings.footer_tagline }}" placeholder=" " aria-label="Footer Tagline">
+            <span class="admin-floating-field__label">Footer Tagline</span>
+          </label>
+        </div>
+        <div
+          class="admin-settings-tabs__panel{% if (activeSettingsTab or 'details') == 'header-logo' %} is-active{% endif %}"
+          data-settings-tab-panel
+          data-settings-tab-panel-id="header-logo"
+          role="tabpanel"
+          id="settings-tab-header-logo"
+          aria-labelledby="settings-tab-trigger-header-logo"
+        >
+          <div class="admin-logo-layout">
+            <div class="admin-logo-config">
+              <div class="admin-logo-controls" data-logo-controls>
+                <fieldset class="admin-toggle-group">
+                  <legend>Header Logo Mode</legend>
+                  <div class="admin-pill-toggle" role="radiogroup" aria-label="Header Logo Mode">
+                    <label class="admin-pill-toggle__option">
+                      <input type="radio" name="logo_mode" value="static" {% if settings.logo_mode != 'animated' %}checked{% endif %}>
+                      <span>Static</span>
+                    </label>
+                    <label class="admin-pill-toggle__option">
+                      <input type="radio" name="logo_mode" value="animated" {% if settings.logo_mode == 'animated' %}checked{% endif %}>
+                      <span>Animated</span>
+                    </label>
+                  </div>
+                </fieldset>
+                <aside class="admin-logo-preview">
+                  <div class="admin-logo-preview__frame" data-admin-logo-preview data-logo-settings="{{ settings.logo_animation_settings_json | escape }}">
+                    <div class="admin-logo-preview__static{% if settings.logo_mode == 'animated' %} is-hidden{% endif %}" data-admin-logo-static-preview>
+                      <img src="/assets/img/logo1.png" alt="" class="brand-mark__image">
+                    </div>
+                    <div class="admin-logo-preview__animated{% if settings.logo_mode != 'animated' %} is-hidden{% endif %}" data-admin-logo-animated-preview>
+                      <span class="brand-mark brand-mark--animated admin-logo-preview__mark">
+                        <span class="brand-mark__canvas" data-logo-canvas data-logo-animation-mode="{{ settings.logo_animation_mode or 'signal' }}" data-logo-settings="{{ settings.logo_animation_settings_json | escape }}"></span>
+                      </span>
+                    </div>
+                  </div>
+                </aside>
+                <div class="admin-logo-animation-row" data-logo-animation-field {% if settings.logo_mode != 'animated' %}hidden{% endif %}>
+                  <div class="admin-logo-animation-group">
+                    <span class="admin-logo-animation-group__label">Header Logo Animation</span>
+                    <select class="admin-logo-animation-group__select" name="logo_animation_mode" {% if settings.logo_mode != 'animated' %}disabled{% endif %}>
+                      <option value="signal" {% if settings.logo_animation_mode != 'bars' and settings.logo_animation_mode != 'radar' and settings.logo_animation_mode != 'g-spin' and settings.logo_animation_mode != 'gg-dual-spin' and settings.logo_animation_mode != 'peek-face' %}selected{% endif %}>Signal Trace</option>
+                      <option value="bars" {% if settings.logo_animation_mode == 'bars' %}selected{% endif %}>Sine Bars</option>
+                      <option value="radar" {% if settings.logo_animation_mode == 'radar' %}selected{% endif %}>Radar Sweep</option>
+                      <option value="g-spin" {% if settings.logo_animation_mode == 'g-spin' %}selected{% endif %}>Spinning G</option>
+                      <option value="gg-dual-spin" {% if settings.logo_animation_mode == 'gg-dual-spin' %}selected{% endif %}>Dual Spinning GG</option>
+                      <option value="peek-face" {% if settings.logo_animation_mode == 'peek-face' %}selected{% endif %}>Peek Face</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <section class="admin-logo-parameters" data-logo-parameters {% if settings.logo_mode != 'animated' %}hidden{% endif %}>
+                <section class="admin-logo-parameters__group" data-logo-parameter-group="shared">
+                  <h3>Shared Parameters</h3>
+                  <div class="admin-logo-parameter-cluster">
+                    <h4>Color</h4>
+                    <div class="inline-fields">
+                      <label>
+                        Background Color
+                        <div class="color-picker-field" data-color-picker>
+                          <input type="color" name="logo_anim_background_color" value="{{ settings.logo_anim_background_color or '#000000' }}">
+                          <span class="color-picker-field__value" data-color-picker-value>{{ settings.logo_anim_background_color or '#000000' }}</span>
+                        </div>
+                      </label>
+                      <label>
+                        Foreground Color
+                        <div class="color-picker-field" data-color-picker>
+                          <input type="color" name="logo_anim_foreground_color" value="{{ settings.logo_anim_foreground_color or '#ffffff' }}">
+                          <span class="color-picker-field__value" data-color-picker-value>{{ settings.logo_anim_foreground_color or '#ffffff' }}</span>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="admin-logo-parameter-cluster">
+                    <h4>Motion</h4>
+                    <div class="inline-fields">
+                      <label>
+                        Speed Multiplier
+                        <div class="range-field" data-range-field>
+                          <input type="range" name="logo_anim_speed_multiplier" min="0.25" max="3" step="0.05" value="{{ settings.logo_anim_speed_multiplier or '1' }}">
+                          <output class="range-field__value" data-range-value>{{ settings.logo_anim_speed_multiplier or '1' }}</output>
+                        </div>
+                      </label>
+                      <label>
+                        Glow Intensity
+                        <div class="range-field" data-range-field>
+                          <input type="range" name="logo_anim_glow_intensity" min="0" max="1" step="0.05" value="{{ settings.logo_anim_glow_intensity or '0.65' }}">
+                          <output class="range-field__value" data-range-value>{{ settings.logo_anim_glow_intensity or '0.65' }}</output>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="admin-logo-parameter-cluster">
+                    <h4>Stroke</h4>
+                    <label>
+                      Line Thickness
+                      <div class="range-field" data-range-field>
+                        <input type="range" name="logo_anim_line_thickness" min="1" max="8" step="0.1" value="{{ settings.logo_anim_line_thickness or '2.4' }}">
+                        <output class="range-field__value" data-range-value>{{ settings.logo_anim_line_thickness or '2.4' }}</output>
+                      </div>
+                    </label>
+                  </div>
+                </section>
+                <section class="admin-logo-parameters__animation-panel">
+                  <section class="admin-logo-parameters__group" data-logo-parameter-group="signal">
+                    <h3>Signal Trace Parameters</h3>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Wave</h4>
+                      <div class="inline-fields">
+                        <label>
+                          Trace Speed
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_signal_trace_speed" min="0.1" max="3" step="0.05" value="{{ settings.logo_signal_trace_speed or '1' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_signal_trace_speed or '1' }}</output>
+                          </div>
+                        </label>
+                        <label>
+                          Amplitude
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_signal_amplitude" min="0.2" max="2" step="0.05" value="{{ settings.logo_signal_amplitude or '1' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_signal_amplitude or '1' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Grid</h4>
+                      <div class="inline-fields">
+                        <div class="admin-feature-toggle">
+                          <span class="admin-feature-toggle__label">Show Grid</span>
+                          <label class="admin-pill-switch">
+                            <input type="checkbox" name="logo_signal_grid_enabled" value="1" {% if settings.logo_signal_grid_enabled != '0' %}checked{% endif %}>
+                            <span>Enabled</span>
+                          </label>
+                        </div>
+                        <label>
+                          Grid Opacity
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_signal_grid_opacity" min="0" max="1" step="0.05" value="{{ settings.logo_signal_grid_opacity or '0.35' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_signal_grid_opacity or '0.35' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="admin-logo-parameters__group" data-logo-parameter-group="bars">
+                    <h3>Sine Bars Parameters</h3>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Shape</h4>
+                      <div class="inline-fields">
+                        <label>
+                          Bar Count
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_bars_count" min="8" max="40" step="1" value="{{ settings.logo_bars_count or '22' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_bars_count or '22' }}</output>
+                          </div>
+                        </label>
+                        <label>
+                          Bar Width
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_bars_bar_width" min="1" max="12" step="0.1" value="{{ settings.logo_bars_bar_width or '3.2' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_bars_bar_width or '3.2' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Motion</h4>
+                      <div class="inline-fields">
+                        <label>
+                          Speed
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_bars_speed" min="0.1" max="3" step="0.05" value="{{ settings.logo_bars_speed or '1' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_bars_speed or '1' }}</output>
+                          </div>
+                        </label>
+                        <label>
+                          Amplitude
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_bars_amplitude" min="0.2" max="2" step="0.05" value="{{ settings.logo_bars_amplitude or '1' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_bars_amplitude or '1' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="admin-logo-parameters__group" data-logo-parameter-group="radar">
+                    <h3>Radar Sweep Parameters</h3>
+                    <div class="inline-fields">
+                      <label>
+                        Sweep Speed
+                        <div class="range-field" data-range-field>
+                          <input type="range" name="logo_radar_sweep_speed" min="0.1" max="3" step="0.05" value="{{ settings.logo_radar_sweep_speed or '1' }}">
+                          <output class="range-field__value" data-range-value>{{ settings.logo_radar_sweep_speed or '1' }}</output>
+                        </div>
+                      </label>
+                      <label>
+                        Trail Length
+                        <div class="range-field" data-range-field>
+                          <input type="range" name="logo_radar_trail_length" min="2" max="24" step="1" value="{{ settings.logo_radar_trail_length or '12' }}">
+                          <output class="range-field__value" data-range-value>{{ settings.logo_radar_trail_length or '12' }}</output>
+                        </div>
+                      </label>
+                    </div>
+                    <label>
+                      Beam Width
+                      <div class="range-field" data-range-field>
+                        <input type="range" name="logo_radar_beam_width" min="1" max="20" step="0.5" value="{{ settings.logo_radar_beam_width or '4' }}">
+                        <output class="range-field__value" data-range-value>{{ settings.logo_radar_beam_width or '4' }}</output>
+                      </div>
+                    </label>
+                  </section>
+                  <section class="admin-logo-parameters__group" data-logo-parameter-group="g-spin">
+                    <h3>Spinning G Parameters</h3>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Typography</h4>
+                      <div class="inline-fields">
+                        <label>
+                          Text
+                          <input type="text" name="logo_g_spin_text" value="{{ settings.logo_g_spin_text or 'GG' }}">
+                        </label>
+                        <label>
+                          Font Size
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_g_spin_font_size" min="16" max="42" step="1" value="{{ settings.logo_g_spin_font_size or '35' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_g_spin_font_size or '35' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Motion</h4>
+                      <label>
+                        Speed
+                        <div class="range-field" data-range-field>
+                          <input type="range" name="logo_g_spin_speed" min="0.1" max="3" step="0.05" value="{{ settings.logo_g_spin_speed or '1' }}">
+                          <output class="range-field__value" data-range-value>{{ settings.logo_g_spin_speed or '1' }}</output>
+                        </div>
+                      </label>
+                    </div>
+                  </section>
+                  <section class="admin-logo-parameters__group" data-logo-parameter-group="gg-dual-spin">
+                    <h3>Dual Spinning GG Parameters</h3>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Typography</h4>
+                      <label>
+                        Font Size
+                        <div class="range-field" data-range-field>
+                          <input type="range" name="logo_dual_font_size" min="14" max="36" step="1" value="{{ settings.logo_dual_font_size or '29' }}">
+                          <output class="range-field__value" data-range-value>{{ settings.logo_dual_font_size or '29' }}</output>
+                        </div>
+                      </label>
+                    </div>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Timing</h4>
+                      <div class="inline-fields">
+                        <label>
+                          Change Interval Min
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_dual_change_interval_min" min="10" max="300" step="1" value="{{ settings.logo_dual_change_interval_min or '45' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_dual_change_interval_min or '45' }}</output>
+                          </div>
+                        </label>
+                        <label>
+                          Change Interval Max
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_dual_change_interval_max" min="10" max="300" step="1" value="{{ settings.logo_dual_change_interval_max or '100' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_dual_change_interval_max or '100' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Axes</h4>
+                      <div class="admin-logo-parameters__checks admin-logo-parameters__checks--inline">
+                        <div class="admin-feature-toggle">
+                          <span class="admin-feature-toggle__label">Allow Vertical Axis</span>
+                          <label class="admin-pill-switch">
+                            <input type="checkbox" name="logo_dual_allow_vertical_axis" value="1" {% if settings.logo_dual_allow_vertical_axis != '0' %}checked{% endif %}>
+                            <span>Enabled</span>
+                          </label>
+                        </div>
+                        <div class="admin-feature-toggle">
+                          <span class="admin-feature-toggle__label">Allow Horizontal Axis</span>
+                          <label class="admin-pill-switch">
+                            <input type="checkbox" name="logo_dual_allow_horizontal_axis" value="1" {% if settings.logo_dual_allow_horizontal_axis != '0' %}checked{% endif %}>
+                            <span>Enabled</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </section>
+                  <section class="admin-logo-parameters__group" data-logo-parameter-group="peek-face">
+                    <h3>Peek Face Parameters</h3>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Appearance</h4>
+                      <label>
+                        Face Color
+                        <div class="color-picker-field" data-color-picker>
+                          <input type="color" name="logo_face_color" value="{{ settings.logo_face_color or '#ffffff' }}">
+                          <span class="color-picker-field__value" data-color-picker-value>{{ settings.logo_face_color or '#ffffff' }}</span>
+                        </div>
+                      </label>
+                    </div>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Timing</h4>
+                      <label>
+                        Minimum Visible Frames
+                        <div class="range-field" data-range-field>
+                          <input type="range" name="logo_face_min_visible_frames" min="60" max="3600" step="1" value="{{ settings.logo_face_min_visible_frames or '1800' }}">
+                          <output class="range-field__value" data-range-value>{{ settings.logo_face_min_visible_frames or '1800' }}</output>
+                        </div>
+                      </label>
+                    </div>
+                    <div class="admin-logo-parameter-cluster">
+                      <h4>Behavior</h4>
+                      <div class="inline-fields">
+                        <label>
+                          Half Peek Probability
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_face_half_peek_probability" min="0" max="1" step="0.01" value="{{ settings.logo_face_half_peek_probability or '0.22' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_face_half_peek_probability or '0.22' }}</output>
+                          </div>
+                        </label>
+                        <label>
+                          Hat Probability
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_face_hat_probability" min="0" max="1" step="0.01" value="{{ settings.logo_face_hat_probability or '0.32' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_face_hat_probability or '0.32' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                      <div class="inline-fields">
+                        <label>
+                          Talk Probability
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_face_talk_probability" min="0" max="1" step="0.01" value="{{ settings.logo_face_talk_probability or '0.42' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_face_talk_probability or '0.42' }}</output>
+                          </div>
+                        </label>
+                        <label>
+                          Blink Mode Probability
+                          <div class="range-field" data-range-field>
+                            <input type="range" name="logo_face_blink_mode_probability" min="0" max="1" step="0.01" value="{{ settings.logo_face_blink_mode_probability or '0.18' }}">
+                            <output class="range-field__value" data-range-value>{{ settings.logo_face_blink_mode_probability or '0.18' }}</output>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </section>
+                </section>
+              </section>
+            </div>
+          </div>
+        </div>
+        <div
+          class="admin-settings-tabs__panel{% if (activeSettingsTab or 'details') == 'distribution' %} is-active{% endif %}"
+          data-settings-tab-panel
+          data-settings-tab-panel-id="distribution"
+          role="tabpanel"
+          id="settings-tab-distribution"
+          aria-labelledby="settings-tab-trigger-distribution"
+        >
+          <input type="hidden" name="active_distribution_tab" value="{{ activeDistributionTab or (distributionDestinations[0].destination_key if distributionDestinations and distributionDestinations.length else 'linkedin') }}" data-active-distribution-tab-input>
+          <label class="admin-floating-field">
+            <input type="url" name="site_url" value="{{ settings.site_url or '' }}" placeholder=" " aria-label="Canonical Site URL">
+            <span class="admin-floating-field__label">Canonical Site URL</span>
+          </label>
+          <p class="muted-text">Phase 1 uses this URL to build the public link for each share kit.</p>
+
+          <section class="admin-distribution-settings-tabs" data-distribution-tabs>
+            <div class="admin-distribution-settings-tabs__list" role="tablist" aria-label="Distribution destinations">
+              {% for destination in distributionDestinations %}
+                <button
+                  type="button"
+                  class="admin-distribution-settings-tabs__trigger{% if (activeDistributionTab or (distributionDestinations[0].destination_key if distributionDestinations and distributionDestinations.length else 'linkedin')) == destination.destination_key %} is-active{% endif %}"
+                  data-distribution-tab-trigger
+                  data-distribution-tab-target="{{ destination.destination_key }}"
+                  role="tab"
+                  aria-selected="{{ 'true' if (activeDistributionTab or (distributionDestinations[0].destination_key if distributionDestinations and distributionDestinations.length else 'linkedin')) == destination.destination_key else 'false' }}"
+                >
+                  {{ destination.label }}
+                </button>
+              {% endfor %}
+            </div>
+
+            {% for destination in distributionDestinations %}
+              <section
+                class="admin-distribution-settings-tabs__panel{% if (activeDistributionTab or (distributionDestinations[0].destination_key if distributionDestinations and distributionDestinations.length else 'linkedin')) == destination.destination_key %} is-active{% endif %}"
+                data-distribution-tab-panel
+                data-distribution-tab-panel-id="{{ destination.destination_key }}"
+              >
+                <article class="admin-distribution-settings-card" data-enable-toggle-scope>
+                  <div class="panel-heading panel-heading--compact">
+                    <div>
+                      <h2>{{ destination.label }}</h2>
+                      <p class="muted-text">{% if destination.destination_key == 'linkedin' %}Announcement post{% elif destination.destination_key == 'medium' %}Long-form article{% elif destination.destination_key == 'substack' %}Newsletter / article{% else %}{{ destination.destination_type | replace('_', ' ') }}{% endif %}</p>
+                    </div>
+                    <div class="admin-feature-toggle">
+                      <label class="admin-pill-switch" data-enable-toggle>
+                        <input type="checkbox" name="enabled_{{ destination.id }}" value="1" {% if destination.is_enabled %}checked{% endif %} data-enable-toggle-input>
+                        <span data-enable-toggle-label>{{ 'Enabled' if destination.is_enabled else 'Enable' }}</span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="inline-fields">
+                    <label class="admin-floating-field">
+                      <select name="posting_mode_{{ destination.id }}" aria-label="Posting mode for {{ destination.label }}" {% if not destination.is_enabled %}disabled{% endif %}>
+                        <option value="manual" {% if destination.posting_mode == 'manual' %}selected{% endif %}>Manual</option>
+                        <option value="on_first_publish" {% if destination.posting_mode == 'on_first_publish' %}selected{% endif %}>On First Publish</option>
+                        <option value="on_every_update" {% if destination.posting_mode == 'on_every_update' %}selected{% endif %}>On Every Update</option>
+                      </select>
+                      <span class="admin-floating-field__label">Posting Mode</span>
+                    </label>
+                    <label class="admin-floating-field">
+                      <input type="url" name="destination_url_{{ destination.id }}" value="{{ destination.config.destination_url or '' }}" placeholder=" " aria-label="Destination URL for {{ destination.label }}" {% if not destination.is_enabled %}disabled{% endif %}>
+                      <span class="admin-floating-field__label">{% if destination.destination_key == 'linkedin' %}Profile or Page URL{% elif destination.destination_key == 'medium' %}Profile or Publication URL{% elif destination.destination_key == 'substack' %}Publication URL{% else %}Destination URL{% endif %}</span>
+                    </label>
+                  </div>
+                  {% if destination.destination_key == 'linkedin' %}
+                    <p class="muted-text">Use this for your LinkedIn profile or company page where you will publish announcement posts.</p>
+                    <div class="admin-distribution-auth-status">
+                      <p class="muted-text"><strong>OAuth configuration:</strong> {% if linkedInAuth.isConfigured %}Ready{% else %}Missing environment variables{% endif %}</p>
+                      <p class="muted-text"><strong>Redirect URI:</strong> {{ linkedInAuth.redirectUri }}</p>
+                      <p class="muted-text"><strong>Scopes:</strong> {{ linkedInAuth.scopes | join(' ') }}</p>
+                      {% if linkedInAuth.isConnected %}
+                        <p class="muted-text"><strong>LinkedIn status:</strong> Connected for authorization.</p>
+                        <p class="muted-text">This app currently supports LinkedIn OAuth connection and manual posting workflows. Native LinkedIn publishing remains blocked until LinkedIn provides a supported author-identification path for this app type.</p>
+                        {% if linkedInAuth.tokenExpiresAt %}<p class="muted-text"><strong>Token expires:</strong> {{ linkedInAuth.tokenExpiresAt | date }}</p>{% endif %}
+                        <div class="admin-distribution-links">
+                          <a href="/admin/settings/linkedin/connect" class="button button-secondary">Reconnect LinkedIn</a>
+                          <button type="submit" class="button button-secondary" formaction="/admin/settings/linkedin/disconnect" formmethod="post">Disconnect LinkedIn</button>
+                        </div>
+                      {% else %}
+                        <div class="admin-distribution-links">
+                          <a href="/admin/settings/linkedin/connect" class="button button-primary">Connect LinkedIn</a>
+                        </div>
+                      {% endif %}
+                    </div>
+                  {% elif destination.destination_key == 'medium' %}
+                    <p class="muted-text">Use this for your Medium profile or publication. This phase prepares export-ready article content for manual publishing.</p>
+                  {% elif destination.destination_key == 'substack' %}
+                    <p class="muted-text">Use this for your Substack publication. This phase prepares newsletter-style copy and article body for manual publishing.</p>
+                  {% endif %}
+                </article>
+              </section>
+            {% endfor %}
+          </section>
+        </div>
+
+<div
+          class="admin-settings-tabs__panel{% if (activeSettingsTab or 'details') == 'contact-links' %} is-active{% endif %}"
+          data-settings-tab-panel
+          data-settings-tab-panel-id="contact-links"
+          role="tabpanel"
+          id="settings-tab-contact-links"
+          aria-labelledby="settings-tab-trigger-contact-links"
+        >
+          <label class="admin-floating-field">
+            <input type="email" name="contact_email" value="{{ settings.contact_email }}" placeholder=" " aria-label="Contact Email">
+            <span class="admin-floating-field__label">Contact Email</span>
+          </label>
+          <div class="inline-fields">
+            <label class="admin-floating-field">
+              <input type="url" name="toji_url" value="{{ settings.elsewhere_links_parsed[0].url if settings.elsewhere_links_parsed[0] else '' }}" placeholder=" " aria-label="Toji URL">
+              <span class="admin-floating-field__label">Toji URL</span>
+            </label>
+            <label class="admin-floating-field">
+              <input type="url" name="github_url" value="{{ settings.elsewhere_links_parsed[1].url if settings.elsewhere_links_parsed[1] else '' }}" placeholder=" " aria-label="GitHub URL">
+              <span class="admin-floating-field__label">GitHub URL</span>
+            </label>
+          </div>
+          <div class="inline-fields">
+            <label class="admin-floating-field">
+              <input type="url" name="linkedin_url" value="{{ settings.elsewhere_links_parsed[2].url if settings.elsewhere_links_parsed[2] else '' }}" placeholder=" " aria-label="LinkedIn URL">
+              <span class="admin-floating-field__label">LinkedIn URL</span>
+            </label>
+            <label class="admin-floating-field">
+              <input type="url" name="medium_url" value="{{ settings.elsewhere_links_parsed[3].url if settings.elsewhere_links_parsed[3] else '' }}" placeholder=" " aria-label="Medium URL">
+              <span class="admin-floating-field__label">Medium URL</span>
+            </label>
+          </div>
+          <label class="admin-floating-field">
+            <input type="url" name="instagram_url" value="{{ settings.elsewhere_links_parsed[4].url if settings.elsewhere_links_parsed[4] else '' }}" placeholder=" " aria-label="Instagram URL">
+            <span class="admin-floating-field__label">Instagram URL</span>
+          </label>
+        </div>
+      </div>
+      <div class="admin-settings-tabs__actions">
+        <button type="submit" class="button button-primary">Save Settings</button>
+      </div>
+    </form>
+  </section>
+{% endblock %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
